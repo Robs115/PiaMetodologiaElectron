@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/index/style.css' %}">
+    <link rel="shortcut icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjmumEavWfobVNFtNJpzMzGoyuvJG7eEXBDQ&s" type="image/x-icon">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <title>VidaVet - Veterinaria profesional</title>
+</head>
+<body>
+   <main class="container"> 
+    <div id="header" class="row mt-3" >
+
+        <div id="logo" class="col-2">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjmumEavWfobVNFtNJpzMzGoyuvJG7eEXBDQ&s" alt="patitadeperro">
+        </div> 
+        
+        <div id="nombreempresa" class="col-2">
+            
+            <h3>VidaVet</h3>
+            <p>Cuidado con cariño</p>
+        </div>
+
+       
+        <div id="indice" class="col-8" >
+            <ul>
+                <li><a href="#tituloServ">Servicios</a></li>
+                <li><a href="#equipo">Equipo</a></li>
+                <li><a href="#galeria">Galeria</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+                <li><a href="#pregFrecuentes">FAQ</a></li>
+                <li><a href="#cotizaciones">Cotizacion</a></li>
+                <li><a href="{% url 'login' %}">Iniciar Sesion</a></li>
+                <div id="divdeprueba">
+                    <button type="button" onclick="modoOscuro()"><i class="fa-solid fa-moon"></i></button>
+                    <i id="a" class="fa-solid fa-font"></i>:  
+                    <button type="button" onclick="tamañoGrande()"><i class="fa-solid fa-plus"></i></button>
+                    <button type="button" onclick="tamañoPequeño()"><i class="fa-solid fa-minus"></i></button>
+                </div>
+            </ul>
+        </div>
+        
+        
+
+    </div>  
+    
+    
+    <!--Script para modo oscuro y tamaño de fuente -->
+    <script>
+        let modooscuro = false;
+        function modoOscuro() {
+            
+            if (!modooscuro) {
+    
+                
+            document.body.style.backgroundColor = "#121212";
+            document.body.style.color = "#f7f9fa";
+
+            // Header
+            document.querySelector("#header")?.style.setProperty("border-bottom", "2px solid #444");
+            document.querySelector("#nombreempresa h3")?.style.setProperty("color", "#4DD0E1");
+            document.querySelector("#nombreempresa p")?.style.setProperty("color", "#EDEDED");
+
+            // ÍNDICE / MENÚ
+            document.querySelectorAll("#indice ul li a").forEach(a => {
+                a.style.color = "#EDEDED";
+            });
+            document.querySelector('#a')?.style.setProperty('color', "black");
+
+            // TARJETAS DE SERVICIOS
+            document.querySelectorAll(".card-servicio").forEach(card => {
+                card.style.backgroundColor = "#1E1E1E";
+                
+                card.style.boxShadow = "0 8px 20px rgba(255,255,255,0.05)";
+            });
+            document.querySelectorAll(".card-servicio .card-title").forEach(card => card.style.color = "#EDEDED");
+            document.querySelectorAll(".card-servicio .card-text").forEach(card => card.style.color = "#EDEDED");
+
+            document.querySelectorAll(".card-servicio i").forEach(i => i.style.color = "#4DD0E1");
+            document.querySelectorAll(".card-servicio .precio").forEach(p => {
+                p.style.backgroundColor = "#4DD0E1";
+                p.style.color = "#000";
+            });
+
+            // EQUIPO
+            document.querySelectorAll("#equipo h3, #equipo h4").forEach(e => e.style.color = "#4DD0E1");
+
+            // PREGUNTAS FRECUENTES
+            document.querySelectorAll(".accordion-button").forEach(btn => {
+                btn.style.backgroundColor = "#222";
+                btn.style.color = "#f7f9fa";
+            });
+
+            // RESEÑAS
+            document.querySelector("#resenas")?.style.setProperty("background-color", "#1E1E1E");
+            document.querySelector("#resenas")?.style.setProperty("color", "#f0f0f0"); //no funciona idk why
+            document.querySelector("#resenas h3")?.style.setProperty("color", "#4DD0E1")
+            document.querySelectorAll("#resenas .card-title").forEach(a => {
+                a.style.color= "#4DD0E1"
+            })
+            document.querySelectorAll("#resenas .card-text").forEach(a => {
+                a.style.color= "#f0f0f0"
+            })
+            
+            
+            document.querySelectorAll("#resenas .resena").forEach(r => {
+                r.style.backgroundColor = "#222";
+                r.style.color = "#f0f0f0";
+            });
+
+            // COTIZACIONES
+            document.querySelector("#cotizaciones")?.style.setProperty("background-color", "#1E1E1E");
+            document.querySelector("#cotizaciones .btn-cotizacion")?.style.setProperty("background-color", "#4DD0E1");
+             document.querySelector("#cotizaciones .btn-cotizacion")?.style.setProperty("color", "black");
+            document.querySelectorAll("#cotizaciones select, #cotizaciones input").forEach(e => {
+                e.style.backgroundColor = "#2C2C2C";
+                e.style.color = "#f7f9fa";
+                e.style.border = "1px solid #666";
+            });
+
+            // CONTACTO
+            document.querySelectorAll("#contacto input, #contacto textarea").forEach(e => {
+                e.style.backgroundColor = "#2C2C2C";
+                e.style.color = "#f7f9fa";
+                e.style.border = "1px solid #666";
+            });
+            document.querySelector("#contacto button")?.style.setProperty("background-color", "#4DD0E1");
+            document.querySelector("#contacto button")?.style.setProperty("color", "#000");
+
+            // FOOTER
+            document.querySelector(".footer")?.style.setProperty("background-color", "#4DD0E1");
+            document.querySelector(".footer")?.style.setProperty("color", "black");
+
+            //Presentacion (no sirve aun)
+            document.querySelector("#textoPres p")?.style.setProperty("color","#f0f0f0")
+            document.querySelector("#textoPres h2")?.style.setProperty("color","#f0f0f0")
+            document.querySelectorAll("#textoPres .col-md-6.mt-1 p").forEach(a => {
+
+            a.style.color="#f0f0f0"
+            })
+            
+            modooscuro = true;
+        } else {
+            
+            const all = document.querySelectorAll("*:not(img):not(svg):not(path)");
+            all.forEach(el => el.removeAttribute("style"));
+
+            document.querySelectorAll(".icons").forEach(icon => {
+                icon.style.color = "#089688"; 
+            });
+            modooscuro = false;
+
+            }
+        }
+        function tamañoGrande() {
+            document.body.style.fontSize = "150%"
+        }
+        function tamañoPequeño() {
+            document.body.style.fontSize = "100%"
+        }
+    </script>
+    
+    <div id="Pres" class="row mt-5">
+        <div id="textoPres" class="col">
+            
+            <h2>Tu mascota merece lo mejor</h2><br>
+            <p>En Vida Vet, cuidamos de tu mascota como si fuera parte de nuestra familia. Ofrecemos atención médica, estética y preventiva con el compromiso que merecen.</p>
+            <br>
+            <div class="container">
+                <div class="row align-items-center">
+                    <div id="logoFA" class="col-md-3 text-center mt-1">
+                        <i class="fa-solid fa-heart-pulse fa-4x icons" style="color: #089688;"></i>
+                    </div>
+                    <div class="col-md-6 mt-1">
+                    <p><b>Urgencias 24/7</b></p>
+                    <p>
+                        Atencion rapida y profesional
+                    </p>
+                    </div>
+                    <div class="col-md-3"></div>
+                </div>
+            </div>
+            
+        </div>
+        <div id="imgPres" class="col">
+            <img src="https://media.istockphoto.com/id/1207479145/es/foto/un-hermoso-perro-est%C3%A1-parado-en-una-pancarta-vac%C3%ADa.jpg?s=612x612&w=0&k=20&c=DVXo_lN0FELTrlDU5TcYPFgl2a2UABMIma7i4WdrzpQ=" alt="perroConFondoBlanco">
+
+        </div>
+    </div>
+
+
+    <!--Seccion de servicios-->
+    <div id="servicios" class="row justify-content-center mt-5 pt-5">
+        <h3 id = "tituloServ">Servicios</h3>
+        {% for servicio in servicios %}
+            <div class="col-md-4 mb-4">
+                <div class="card card-servicio shadow-lg text-white">
+                    <div class="card-body">
+                        <i class="fa-solid fa-paw fa-2x mb-3 "></i>
+                        <h3 class="card-title">{{ servicio.nombre }}</h3>
+                        <p class="card-text">{{ servicio.descripcion }}</p>
+                        <span class="precio">${{ servicio.precio }}</span>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-white">No hay servicios registrados aún.</p>
+        {% endfor %}
+    </div>
+
+
+    <div id="equipo" class="row mt-4">
+        <div id="doctora" class="col">
+            <h3>Nuestro equipo</h3>
+            <p>Estamos conformados por especialistas apasionados por la salud animal. Combinamos experiencia profesional y un trato humano para garantizar que cada mascota reciba la mejor atención posible.</p>
+            <div id="logoDra">
+                <i class="fa-solid fa-stethoscope fa-2x"></i><p>Dra. Ana Gómez <br> Médico Veterinario -- Especialista en medicina felina</p>
+            </div>
+            
+        </div>
+        <div id="elegirnos" class="col">
+            <h4>¿Por qué elegirnos?</h4>
+            <ul>
+                <li>Atención profesional con excelente trato a las mascotas.</li>
+                <li>Equipo moderno y protocolos actualizados.</li>
+                <li>Planes de tratamientos personalizados.</li>
+            </ul>
+        </div>
+
+    </div>
+    <!-- Falta Poner Preguntas Reales -->
+    <div id="pregFrecuentes" class="row mt-5">
+        <div class="accordion" id="acordeonPrincipal">
+            <h3>Preguntas frecuentes</h3>
+            <!--Pregunta 1 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#itemUno" 
+                            aria-expanded="false" 
+                            aria-controls="itemUno">
+                        Pregunta frecuente 1: ¿Cada cuánto debo hacer un chequeo general?
+                    </button>
+                </h2>
+                <div id="itemUno" class="accordion-collapse collapse" 
+                     data-bs-parent="#acordeonPrincipal">
+                    <div class="accordion-body">
+                        Recomendamos una evaluación completa al menos una vez al año. En mascotas mayores puede ser cada 6 meses para detectar cambios repentinos con mayor anticipación.
+                    </div>
+                </div>
+            </div>
+            <!-- Fin pregunta 1 -->
+            <!-- Pregunta 2 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#itemDos" 
+                            aria-expanded="false" 
+                            aria-controls="itemDos">
+                        Pregunta frecuente 2: Señales que indican que debo llevar a mi mascota al veterinario
+                    </button>
+                </h2>
+                <div id="itemDos" class="accordion-collapse collapse" 
+                     data-bs-parent="#acordeonPrincipal">
+                    <div class="accordion-body">
+                        Pérdida de apetito, vómito recurrente, diarrea, decaimiento, 
+                        cambios de comportamiento, estornudos constantes, heridas o dolor evidente son 
+                        motivos para revisión inmediata.
+                    </div>
+                </div>
+            </div>
+            <!-- Fin pregunta 2 -->
+            <!-- Pregunta 3 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target="#itemTres" 
+                            aria-expanded="false" 
+                            aria-controls="itemTres">
+                        Pregunta frecuente 3: ¿Es necesario desparasitar aunque mi mascota no este afuera?
+                    </button>
+                </h2>
+                <div id="itemTres" class="accordion-collapse collapse" 
+                     data-bs-parent="#acordeonPrincipal">
+                    <div class="accordion-body">
+                        Sí. Muchos parásitos se transmiten por objetos, alimentos o contacto indirecto. Incluso las mascotas que solo esten en interiores es necesario desparasitación preventiva.
+                    </div>
+                </div>
+            </div>
+            <!--Fin pregunta 3-->
+        </div>
+
+    </div>
+
+    <!-- Reseñas -->
+    <div id="resenas" class="row mt-5 justify-content-center text-center">
+        <h3 class="mb-4"><i class="fa-duotone fa-solid fa-dog" style="--fa-primary-color: #089688; --fa-secondary-color: #089688;"></i> Opiniones de nuestros clientes <i class="fa-duotone fa-solid fa-cat" style="--fa-primary-color: #089688; --fa-secondary-color: #089688;"></i></h3>
+        <p class="text-muted mb-5">Conoce lo que dicen quienes ya confían en Vida Vet <i class="fa-duotone fa-solid fa-heart-pulse" style="--fa-primary-color: #089688; --fa-secondary-color: #089688;"></i></p>
+
+
+        <div class="col-md-4 mb-4">
+            <div class="card resena shadow-lg">
+                <img src="{% static 'img/Clientes/Francisco_Huerta.png' %}" class="card-img-top rounded-circle mx-auto mt-3" alt="cliente">
+                <div class="card-body">
+                    <h5 class="card-title">Francisco Huerta</h5>
+                    <p class="card-text">“Me encantó el servicio de vacunación. Fueron muy pacientes con mi gato y explicaron todo claramente.”</p>
+                    <div class="estrellas">
+                        ⭐⭐⭐⭐☆
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card resena shadow-lg">
+                <img src="{% static 'img/Clientes/nelson_rodriguez.jpg' %}" class="card-img-top rounded-circle mx-auto mt-3" alt="cliente">
+                <div class="card-body">
+                    <h5 class="card-title">Nelson Rodriguez</h5>
+                    <p class="card-text">“Excelente atención y muy profesionales. Mi gato odia los doctores, pero aquí se sintió en casa.”</p>
+                    <div class="estrellas">
+                        ⭐⭐⭐☆☆
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card resena shadow-lg">
+                <img src="{% static 'img/Clientes/Fernando_Hernandez.jpg' %}" class="card-img-top rounded-circle mx-auto mt-3" alt="cliente">
+                <div class="card-body">
+                    <h5 class="card-title">Fernando Hernández</h5>
+                    <p class="card-text">“De los más atentos, me encantó el servicio de vacunación.Volveria a visitar.”</p>
+                    <div class="estrellas">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card resena shadow-lg">
+                <img src="{% static 'img/Clientes/Daniel_Meraz.jpg' %}" class="card-img-top rounded-circle mx-auto mt-3" alt="cliente">
+                <div class="card-body">
+                    <h5 class="card-title">Daniel Meráz</h5>
+                    <p class="card-text">“Sus servicios de desparasitación me encantó mucho. Fue muy amable y atento.”</p>
+                    <div class="estrellas">
+                        ⭐⭐⭐⭐☆
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card resena shadow-lg">
+                <img src="{% static 'img/Clientes/Jaime_Cuellar.jpg' %}" class="card-img-top rounded-circle mx-auto mt-3" alt="cliente">
+                <div class="card-body">
+                    <h5 class="card-title">Jaime Cuellar</h5>
+                    <p class="card-text">“De las mejores veterinarias, me encantó el servicio.”</p>
+                    <div class="estrellas">
+                        ⭐⭐⭐⭐⭐
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card resena shadow-lg">
+                <img src="{% static 'img/Clientes/Roberto_Estrada.jpg' %}" class="card-img-top rounded-circle mx-auto mt-3" alt="cliente">
+                <div class="card-body">
+                    <h5 class="card-title">Roberto Estrada</h5>
+                    <p class="card-text">“Mi perrita estaba muy feliz después de su baño. El trato fue muy amable y la atención fue muy buena.”</p>
+                    <div class="estrellas">
+                        ⭐⭐⭐⭐☆
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Sección Nosotros -->
+    <div id="nosotros" class="row mt-5 pt-5 align-items-center">
+        <div class="col-md-6">
+            <h2 class="mb-4"><i class="fa-solid fa-paw"></i> Sobre Nosotros</h2>
+            <p>
+                En <strong>VidaVet</strong>, creemos que cada mascota merece una atención médica y emocional de calidad. 
+                Somos un equipo comprometido con el bienestar animal, ofreciendo servicios médicos, estéticos y preventivos 
+                que garantizan la salud y felicidad de tus compañeros peludos.
+            </p>
+            <hr class="text-white">
+
+            <h4 class="mt-4"><i class="fa-solid fa-heart icons" style="color: #089688;"></i> Misión</h4>
+            <p>
+                Brindar atención veterinaria integral con calidez humana, profesionalismo y amor por los animales, 
+                asegurando su bienestar y tranquilidad para cada familia que confía en nosotros.
+            </p>
+
+            <h4 class="mt-4"><i class="fa-solid fa-eye icons" style="color: #089688;"></i> Visión</h4>
+            <p>
+                Ser la clínica veterinaria líder en Monterrey reconocida por su excelencia médica, innovación y compromiso 
+                con la vida animal.
+            </p>
+
+            <h4 class="mt-4"><i class="fa-solid fa-scale-balanced icons" style="color: #089688;"></i> Valores</h4>
+            <ul>
+                <li>Empatía y respeto hacia cada ser vivo.</li>
+                <li>Compromiso y responsabilidad profesional.</li>
+                <li>Confianza y transparencia con nuestros clientes.</li>
+                <li>Trabajo en equipo y mejora continua.</li>
+            </ul>
+        </div>
+
+        <div class="col-md-6 text-center">
+            <img src="{% static 'img/Galeria/PersonalPosando.png' %}" 
+                alt="Equipo VidaVet" 
+                class="img-fluid rounded-4 shadow-lg">
+        </div>
+    </div>
+
+
+    <!-- Galeria -->
+
+    <div id="galeria" class="row mt-5">
+        <h3>Galeria</h3>
+        <div id="foto1" class="col">
+            <img src="{% static 'img/Galeria/EntradaVidaVet.png' %}" alt="primer disparo">
+        </div>
+        <div id="foto2" class="col">
+            <img src="{% static 'img/Galeria/Estetica.png' %}">
+
+        </div>
+        <div id="foto3" class="col">
+            <img src="{% static 'img/Galeria/ChequeoGeneral.png' %}">
+
+        </div>
+        <div id="foto4"class="col">
+            <img src="{% static 'img/Galeria/AreaOperaciones.png' %}">
+
+        </div>
+        <div id="foto5"class="col">
+            <img src="{% static 'img/Galeria/AreaDeBaño.png' %}">
+        </div>
+
+    </div>
+    
+    <div class="row mt-4" id="cotizaciones">
+            <h3>Cotizaciones</h3>
+            <div id="servicio" class="col">
+            
+                <fieldset>
+                    
+                    <label for="ddlServicios">Servicios</label><br>
+                    <select name="ddlServicios" id="ddlServicios">
+                        {% for servicio in servicios %}
+                        <option value="{{ servicio.precio }}">{{ servicio.nombre }}</option>
+                        {% endfor %}
+                    </select>
+
+                </fieldset>
+            
+            </div>
+
+            <div id="cantidad" class="col">
+
+                
+                <label for="txtCantidad">Cantidad</label><br>
+                <input type="number" name="txtCantidad" id="txtCantidad">
+                
+
+            </div>
+
+            <div id="descuento" class="col" >
+                
+                    <label for="ddlDescuento">Descuento</label><br>
+                    <select name="ddlDescuento" id="ddlDescuento">
+                        <option value="0">Sin descuento</option>
+                        <option value=".25">25%</option>
+                        <option value=".50">50%</option>
+                        <option value=".75">75%</option>
+                    </select>
+                
+
+            </div>
+            
+            <div id="botonTotal" class="mt-3">
+                <button type="button" class="btn btn-cotizacion" onclick="calculartotal()">Calcular total</button>
+
+            </div>
+
+            <script>
+                function calculartotal() {
+                let servicio = parseInt(document.getElementById("ddlServicios").value);
+                let total = 0;
+                let cantidad = parseInt(document.getElementById("txtCantidad").value);
+                let descuento = parseFloat(document.getElementById("ddlDescuento").value);
+
+                total = (servicio * cantidad)*(1-descuento);
+
+                alert("El total del servicio es: " + total);
+
+                    
+            }
+            </script>
+
+
+            <div id="calcularTotal">
+                <!--Por si lo vamos a calcular en un div-->
+            </div>
+
+
+    </div>
+    
+
+    <div id="contacto" class="row mt-5 ">
+        <div id="formcontacto" class="col">
+            <h3>Contacto</h3>
+            <p>Si deseas una cotización o quieres agendar una cita, completa el formulario y nos comunicaremos contigo lo antes posible. Tu mensaje será atendido con rapidez.</p>
+            <fieldset>
+                <label for="txtNombre">Nombre</label><br>
+                <br><input type="text" name="txtNombre" id="txtNombre" placeholder="Nelson Orlando Rodriguez....."><br>
+                <br><label for="txtTelefono">Telefono</label><br>
+                <br><input type="number" name="txtTelefono" id="txtTelefono" placeholder="Ej. 8134114775"><br>
+                <br><label for="txtMensaje">Mensaje:</label><br>
+                <br><textarea name="txtMensaje" id="txtMensaje" placeholder="Escribe aqui el mensaje...."></textarea><br>
+                <br><button type="submit" class="btn btn-success">Enviar</button>
+                <a href="#visitanos">Llamar ahora</a>
+
+            </fieldset>
+        </div>
+        <div id="visitanos" class="col">
+            <h3>Visitanos</h3>
+            <p>Ven con tu mascota para evaluación, vacunas, estética o cualquier consulta que requieras.</p>
+            <br>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14378.071504201349!2d-100.31054620348105!3d25.72038224790906!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x866295094da26085%3A0x7262d01b7781d627!2sFACPYA%20Facultad%20de%20Contadur%C3%ADa%20P%C3%BAblica%20y%20Administraci%C3%B3n!5e0!3m2!1ses-419!2smx!4v1761782694890!5m2!1ses-419!2smx" width="300" height="150" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <p><b>Telefono: </b>(52) 81 2786 3422</p>
+            <p><b>Email: </b>veterinariapuntoequipo3@gmail.com</p>
+            <p>Siguenos en redes:</p>
+            <ul>
+                <li><a ref="www.instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a></li>
+                <li><a href="https://www.facebook.com/?locale=es_LA" target="_blank"><i class="fa-brands fa-facebook-f"></i></a></li>
+                <li><a href="www.whatsapp.com"><i class="fa-brands fa-whatsapp" target="_blank"></i></a></li> 
+            </ul>
+
+        </div> 
+    </div> 
+    
+    <div class="footer mt-4">
+        
+        <div class="col"><p>2025 VivaVet -- Todos los derechos reservados.</p></div>
+        
+    </div>
+
+    
+   </main> 
+</body>
+</html>
