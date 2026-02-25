@@ -11,9 +11,17 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "electron": "^40.6.0"
+    "electron": "^40.6.1"
   },
   "dependencies": {
     "express": "^5.2.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Robs115/PiaMetodologiaElectron.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Robs115/PiaMetodologiaElectron/issues"
+  },
+  "homepage": "https://github.com/Robs115/PiaMetodologiaElectron#readme"
 }

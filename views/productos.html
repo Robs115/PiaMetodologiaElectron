@@ -14,7 +14,7 @@
         <nav class="sidebar">
 
             <h2>Panel principal</h2>
-            <img href="" alt="Logo de empresa">
+            <img src="/logoempresa.png" alt="Logo de empresa">
             <ul>
                 <li><a href="/dashboard">Inicio</a></li>
             <li><a href="/venta">Ventas</a></li>
@@ -30,10 +30,38 @@
 
         
         <main class="contenido">
-           <h2>LISTADO Y EDITAR PRODUCTOS</h2>
-           <button><a href="/productos/crear">Crear producto</a></button>
+            <div class="productos-container">
+
+                <div class="header-productos">
+                    <h2>Gestión de Productos</h2>
+                    <input type="text" id="buscador" placeholder="Buscar producto...">
+                </div>
+
+                <div class="tabla-contenedor">
+                    <table id="tablaProductos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+   
+            <link rel="stylesheet" href="productos.css">
+           <button class="btn crear"><a href="/productos/crear">Crear producto</a></button>
 
         </main>
     </div>
+        <script src="/js/productos.js"></script>
 </body>
 </html>
