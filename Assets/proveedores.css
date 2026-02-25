@@ -1,0 +1,98 @@
+.proveedores-container {
+    padding: 30px;
+    font-family: 'Inter', sans-serif;
+}
+
+.header-proveedores {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header-proveedores h2 {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+#buscador {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    outline: none;
+    transition: 0.3s;
+    width: 250px;
+}
+
+#buscador:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+}
+
+.tabla-contenedor {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: #111827;
+    color: white;
+}
+
+th, td {
+    padding: 14px;
+    text-align: left;
+}
+
+tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: 0.2s;
+}
+
+tbody tr:hover {
+    background-color: #f3f4f6;
+}
+
+.btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    margin-right: 5px;
+    transition: 0.3s;
+}
+
+.btn.editar {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.btn.editar:hover {
+    background-color: #2563eb;
+}
+
+.btn.eliminar {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn.eliminar:hover {
+    background-color: #dc2626;
+}
+
+.btn.crear {
+    background-color: #2ec04d;
+    color: white;
+}
+
+.btn.crear:hover {
+    background-color: #178b3e;
+}

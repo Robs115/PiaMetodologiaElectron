@@ -14,7 +14,7 @@
         <nav class="sidebar">
 
             <h2>Panel principal</h2>
-            <img href="" alt="Logo de empresa">
+            <img src="/logoempresa.png" alt="Logo de empresa">
             <ul>
                 <li><a href="/dashboard">Inicio</a></li>
             <li><a href="/venta">Ventas</a></li>
@@ -29,11 +29,42 @@
 
 
         
+        
         <main class="contenido">
-           <button > <a  href="/clientes/crear">Crear Cliente</a></button>
-           
+            <div class="clientes-container">
+
+                <div class="header-clientes">
+                    <h2>Gestión de Clientes</h2>
+                    <input type="text" id="buscador" placeholder="Buscar cliente...">
+                </div>
+
+                <div class="tabla-contenedor">
+                    <table id="tablaClientes">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Telefono</th>
+                                <th>Email</th>
+                               <th>Dirección</th> 
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+   
+            <link rel="stylesheet" href="clientes.css">
+           <button class="btn crear"><a href="/clientes/crear">Crear cliente</a></button>
 
         </main>
+    </div>
+        <script src="/js/clientes.js"></script>
 
     </div>
 </body>

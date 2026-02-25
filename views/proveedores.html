@@ -14,7 +14,7 @@
         <nav class="sidebar">
 
             <h2>Panel principal</h2>
-            <img href="" alt="Logo de empresa">
+            <img src="/logoempresa.png" alt="Logo de empresa">
             <ul>
                 <li><a href="/dashboard">Inicio</a></li>
             <li><a href="/venta">Ventas</a></li>
@@ -29,14 +29,45 @@
 
 
         
-        <main class="contenido">
-
-
-            <button><a href="/proveedores/crear">Crear proveedor</a></button>
-            
-
         
+                <main class="contenido">
+            <div class="proveedor-container">
+
+                <div class="header-proveedores">
+                    <h2>Gestión de Proveedores</h2>
+                    <input type="text" id="buscador" placeholder="Buscar proveedor...">
+                </div>
+
+                <div class="tabla-contenedor">
+                    <table id="tablaProveedores">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Telefono</th>
+                                <th>Email</th>
+                               <th>Dirección</th> 
+                               <th>Activo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+   
+            <link rel="stylesheet" href="proveedores.css">
+           <button class="btn crear"><a href="/proveedores/crear">Crear proveedor</a></button>
+
         </main>
+    </div>
+        <script src="/js/proveedores.js"></script>
+
+    </div>
     </div>
 </body>
 </html>
