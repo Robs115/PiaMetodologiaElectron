@@ -1,9 +1,19 @@
 const { app: electronApp, BrowserWindow } = require('electron');
 const express = require('express');
 const path = require('path');
+const sqlite3 = require('sqlite3').verbose();
+
 
 const server = express(); // 👈 nombre diferente
 const PORT = 3000;
+
+const db = new sqlite3.Database(path.join(__dirname, 'PIAMETODOLOGIA.db'), (err) => {
+    if (err) {
+        console.error("Error conectando a la BD:", err.message);
+    } else {
+        console.log("Conectado a PIAMETODOLOGIA.db");
+    }
+});
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -17,8 +27,11 @@ function createWindow() {
 
 electronApp.whenReady().then(createWindow);
 
+
+
 // Archivos estáticos
 server.use(express.static('Assets'));
+server.use(express.json());
 
 // Rutas
 server.get('/', (req, res) => {
@@ -68,6 +81,70 @@ server.get('/productos/crear', (req, res) => {
 server.get('/venta/listar', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/ventas-listar.html'));
 });
+
+
+// Obtener productos
+server.get('/api/productos', (req, res) => {
+
+    const sql = `
+        SELECT 
+            P.IDPRODUCTO as id,
+            P.NOMBRE as nombre,
+            P.PRECIOVENTA as precio,
+            IFNULL(I.STOCK, 0) as stock
+        FROM PRODUCTOS P
+        LEFT JOIN INVENTARIO I
+        ON P.IDPRODUCTO = I.IDPRODUCTO
+    `;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error en la consulta" });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+
+// Crear producto
+server.post('/api/productos', (req, res) => {
+
+    const { nombre, descripcion, precioCompra, precioVenta, idProveedor, stock } = req.body;
+
+    const sqlProducto = `
+        INSERT INTO PRODUCTOS 
+        (NOMBRE, DESCRIPCION, PRECIOCOMPRA, PRECIOVENTA, IDPROVEEDOR)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.run(sqlProducto, [nombre, descripcion, precioCompra, precioVenta, idProveedor], function(err) {
+
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error al insertar producto" });
+        }
+
+        const idProducto = this.lastID;
+
+        const sqlInventario = `
+            INSERT INTO INVENTARIO (IDPRODUCTO, STOCK)
+            VALUES (?, ?)
+        `;
+
+        db.run(sqlInventario, [idProducto, stock], (err2) => {
+
+            if (err2) {
+                console.error(err2);
+                return res.status(500).json({ error: "Error al insertar inventario" });
+            }
+
+            res.json({ success: true });
+        });
+    });
+});
+
 // Iniciar servidor
 server.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);

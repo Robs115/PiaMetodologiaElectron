@@ -1,12 +1,7 @@
-const productos = [
-    { id: 1, nombre: "Croquetas Premium", precio: 450, stock: 20 },
-    { id: 2, nombre: "Arena para gato", precio: 180, stock: 35 },
-    { id: 3, nombre: "Vacuna Antirrábica", precio: 350, stock: 15 },
-    { id: 4, nombre: "Shampoo Canino", precio: 120, stock: 40 }
-];
-
 const tablaBody = document.querySelector("#tablaProductos tbody");
 const buscador = document.getElementById("buscador");
+
+let productos = [];
 
 function renderTabla(lista) {
     tablaBody.innerHTML = "";
@@ -20,8 +15,8 @@ function renderTabla(lista) {
             <td>$${producto.precio}</td>
             <td>${producto.stock}</td>
             <td>
-                <button class="btn editar" onclick="editar(${producto.id})">Editar</button>
-                <button class="btn eliminar" onclick="eliminar(${producto.id})">Eliminar</button>
+                <button class="btn editar">Editar</button>
+                <button class="btn eliminar">Eliminar</button>
             </td>
         `;
 
@@ -29,16 +24,10 @@ function renderTabla(lista) {
     });
 }
 
-function editar(id) {
-    alert("Editar producto ID: " + id);
-}
-
-function eliminar(id) {
-    const index = productos.findIndex(p => p.id === id);
-    if (index !== -1) {
-        productos.splice(index, 1);
-        renderTabla(productos);
-    }
+async function cargarProductos() {
+    const respuesta = await fetch('/api/productos');
+    productos = await respuesta.json();
+    renderTabla(productos);
 }
 
 buscador.addEventListener("keyup", () => {
@@ -49,4 +38,4 @@ buscador.addEventListener("keyup", () => {
     renderTabla(filtrados);
 });
 
-renderTabla(productos);
+cargarProductos();
