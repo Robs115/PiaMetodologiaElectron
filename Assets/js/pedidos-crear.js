@@ -1,4 +1,4 @@
-const form = document.getElementById("formCliente");
+const form = document.getElementById("formPedidos");
 
 
 function mostrarToast(mensaje, tipo = "success") {
@@ -26,7 +26,7 @@ function mostrarToast(mensaje, tipo = "success") {
 
 
             if (tipo === "success") {
-                window.location.href = "/clientes";
+                window.location.href = "/pedidos";
             }
 
         }, 200);//Tiempo en lo que redirige a la pagina principal de productos
@@ -39,32 +39,29 @@ function mostrarToast(mensaje, tipo = "success") {
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const nombre = document.getElementById("nombre").value.trim();
-    const telefono = document.getElementById("telefono").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const direccion = document.getElementById("direccion").value.trim();
-
-    if (!nombre || !telefono || !email || !direccion) {
-        mostrarToast("Todos los campos son obligatorios.", "error");
-        return;
-    }
+    const idproducto = document.getElementById("idproducto").value.trim();
+    const idproveedor = document.getElementById("idproveedor").value.trim();
+    const fechapedido = document.getElementById("fechapedido").value.trim();
+    const cantidad = document.getElementById("cantidad").value.trim();
 
     
 
-    const cliente = {
-        nombre,
-        telefono,
-        email,
-        direccion
+    
+
+    const pedido = {
+        idproducto,
+        idproveedor,
+        fechapedido,
+        cantidad
     };
 
     try {
-        const respuesta = await fetch('/api/clientes', {
+        const respuesta = await fetch('/api/pedidos', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(cliente)
+            body: JSON.stringify(pedido)
         });
 
         if (respuesta.ok) {

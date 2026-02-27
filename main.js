@@ -152,6 +152,63 @@ server.post('/api/productos', (req, res) => {
     });
 });
 
+// Obtener pedidos
+server.get('/api/pedidos', (req, res) => {
+    
+
+    const sql = `
+        SELECT 
+            IDPEDIDO as id,
+            IDPRODUCTO as idproducto,
+            IDPROVEEDOR as idproveedor,
+            FECHAPEDIDO as fechapedido,
+            CANTIDAD as cantidad
+        FROM PEDIDOS
+    `;
+
+    db.all(sql, [], (err, rows) => {
+        
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error en la consulta" });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+
+//Crear pedido
+server.post('/api/pedidos', (req, res) => {
+
+
+
+    const { idproducto, idProveedor, fechapedido, cantidad } = req.body;
+
+    const sqlCliente = `
+        INSERT INTO PEDIDOS
+        (IDPRODUCTO, IDPROVEEDOR, FECHAPEDIDO, CANTIDAD)
+        VALUES (?, ?, ?, ?)
+    `;
+
+    db.run(sqlCliente, [idproducto, idProveedor, fechapedido, cantidad], function(err) {
+
+        if (err) {
+            console.error("ERROR SQLITE:", err);
+            return res.status(500).json({ success: false });
+        }
+
+        console.log("INSERT OK, ID:", this.lastID); // ← IMPORTANTE
+
+        res.json({
+            success: true,
+            idCliente: this.lastID
+        });
+
+    });
+
+});
+
 // Obtener clientes
 server.get('/api/clientes', (req, res) => {
     
@@ -208,6 +265,7 @@ server.post('/api/clientes', (req, res) => {
     });
 
 });
+
 // Iniciar servidor
 server.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
