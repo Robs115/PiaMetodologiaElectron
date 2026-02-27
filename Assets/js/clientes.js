@@ -1,4 +1,4 @@
-const tablaBody = document.querySelector("#tablaCliente tbody");
+const tablaBody = document.querySelector("#tablaClientes tbody");
 const buscador = document.getElementById("buscador");
 
 let clientes = [];

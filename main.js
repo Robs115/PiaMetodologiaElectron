@@ -7,21 +7,15 @@ const sqlite3 = require('sqlite3').verbose();
 const server = express(); // 👈 nombre diferente
 const PORT = 3000;
 
-//const db = new sqlite3.Database(path.join(__dirname, 'PiaMetodologia.db'), (err) => {
-  //  if (err) {
-    //    console.error("Error conectando a la BD:", err.message);
-    //} else {
-      //  console.log("Conectado a PIAMETODOLOGIA.db");
-    //}
-//});
+const db = new sqlite3.Database(path.join(__dirname, 'PiaMetodologia.db'), (err) => {
+    if (err) {
+        console.error("Error conectando a la BD:", err.message);
+    } else {
+        console.log("Conectado a PIAMETODOLOGIA.db");
+    }
+});
 
 
-
-const dbPath = path.join(__dirname, 'database.db');
-
-console.log("RUTA BD:", dbPath);
-
-const db = new sqlite3.Database(dbPath);
 
 
 
@@ -166,7 +160,7 @@ server.post('/api/clientes', (req, res) => {
     const { nombre, telefono, email, direccion } = req.body;
 
     const sqlCliente = `
-        INSERT INTO CLIENTES 
+        INSERT INTO CLIENTES
         (NOMBRE, TELEFONO, EMAIL, DIRECCION)
         VALUES (?, ?, ?, ?)
     `;
