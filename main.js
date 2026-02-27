@@ -183,7 +183,7 @@ server.post('/api/pedidos', (req, res) => {
 
 
 
-    const { idproducto, idProveedor, fechapedido, cantidad } = req.body;
+    const { idproducto, idproveedor, fechapedido, cantidad } = req.body;
 
     const sqlCliente = `
         INSERT INTO PEDIDOS
@@ -191,7 +191,7 @@ server.post('/api/pedidos', (req, res) => {
         VALUES (?, ?, ?, ?)
     `;
 
-    db.run(sqlCliente, [idproducto, idProveedor, fechapedido, cantidad], function(err) {
+    db.run(sqlCliente, [idproducto, idproveedor, fechapedido, cantidad], function(err) {
 
         if (err) {
             console.error("ERROR SQLITE:", err);
