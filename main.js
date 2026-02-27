@@ -152,6 +152,31 @@ server.post('/api/productos', (req, res) => {
     });
 });
 
+// Obtener clientes
+server.get('/api/clientes', (req, res) => {
+    console.log("Solicitud GET /api/clientes");
+
+    const sql = `
+        SELECT 
+            IDCLIENTE as id,
+            NOMBRE as nombre,
+            TELEFONO as telefono,
+            EMAIL as email,
+            DIRECCION as direccion
+        FROM CLIENTES
+    `;
+
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error en la consulta" });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+
 //Crear cliente
 server.post('/api/clientes', (req, res) => {
 
