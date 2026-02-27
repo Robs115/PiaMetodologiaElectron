@@ -266,6 +266,64 @@ server.post('/api/clientes', (req, res) => {
 
 });
 
+
+// Obtener proveedores
+server.get('/api/proveedores', (req, res) => {
+    
+
+    const sql = `
+        SELECT 
+            IDPROVEEDOR as id,
+            NOMBRE as nombre,
+            TELEFONO as telefono,
+            EMAIL as email,
+            DIRECCION as direccion,
+            ACTIVO as activo
+        FROM PROVEEDORES
+    `;
+
+    db.all(sql, [], (err, rows) => {
+        console.log("PROVEEDORES ENCONTRADOS:", rows);
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error en la consulta" });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+//Crear proveedor
+server.post('/api/proveedores', (req, res) => {
+
+    console.log("BODY RECIBIDO:", req.body);
+
+    const { nombre, telefono, email, direccion, activo } = req.body;
+
+    const sqlProveedor = `
+        INSERT INTO PROVEEDORES
+        (NOMBRE, TELEFONO, EMAIL, DIRECCION, ACTIVO)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.run(sqlProveedor, [nombre, telefono, email, direccion, activo], function(err) {
+
+        if (err) {
+            console.error("ERROR SQLITE:", err);
+            return res.status(500).json({ success: false });
+        }
+
+        console.log("INSERT OK, ID:", this.lastID); // ← IMPORTANTE
+
+        res.json({
+            success: true,
+            idProveedor: this.lastID
+        });
+
+    });
+
+});
+
+
 // Iniciar servidor
 server.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);

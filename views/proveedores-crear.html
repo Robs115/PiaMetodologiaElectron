@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--Bootstrap-->
    <link rel="stylesheet" href="/styleindex.css" >
+   <link rel="stylesheet" href="/proveedores.css" >
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <title>Crear proveedores</title>
@@ -31,40 +32,54 @@
         
         <main class="contenido">
 
-            
-           <h2>Formulario crear proveedores</h2>
+            <div class="form-container">
+                <h2>Crear Nuevo Proveedor</h2>
 
-           <label for="nombre_proveedor" >Nombre (s) del cliente</label>
-            <input type="text" name="nombre_proveedor" id="nombre_proveedor" pattern="[A-Za-z\s]+" placeholder="Ej. Juan Orlando" required>
+                <form id="formProveedor">
 
-            <label for="apellido_pat_proveedor" >Apellido paterno</label>
-            <input type="text" name="apellido_pat_proveedor" id="apellido_pat_proveedor"  placeholder="Ej. Lopez" required>
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="nombre" required>
+                    </div>
 
-            <label for="apellido_mat_proveedor" >Apellido materno</label>
-            <input type="text" name="apellido_mat_proveedor" id="apellido_mat_proveedor" pattern="[A-Za-z\s]+" placeholder="Ej. Perez" required>
-        
-            <label for="telefono_proveedor" >Telefono</label>
-            <input type="number" name="telefono_proveedor" id="telefono_proveedor" pattern="[A-Za-z\s]+" placeholder="Ej. 8134114775" required>
+                    <div class="form-group">
+                        <label>Telefono</label>
+                        <input type="text" id="telefono" required>
+                    </div>
 
-            <label for="email_prov" >Email</label>
-            <input type="text" name="email_prov" id="email_prov" pattern="[A-Za-z\s]+" placeholder="Ej."  required>
-            
-            <label for="direccion_prov" >Direccion</label>
-            <input type="text" name="direccion_prov" id="direccion_prov" pattern="[A-Za-z\s]+" placeholder="Ej." required>
-            
-            
-            <select name="activo" id="activo">
-                <option value="1">
-                    Activo
-                </option>
-                <option value="2">
-                    Inactivo
-                </option>
-            </select>
-            
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" required>
+                    </div>
 
-        
+                    <div class="form-group">
+                        <label>Direccion</label>
+                        <input type="text" id="direccion" required>
+                    </div>
+
+                    <select name="activo" id="activo">
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn crear">Guardar Proveedor</button>
+                        <button type="button" class="btn eliminar"
+                            onclick="window.location.href='/proveedores'">
+                            Cancelar
+                        </button>
+
+                    </div>
+
+                </form>
+            </div>
+
         </main>
+
+        <script src="/js/proveedores-crear.js"></script>
+    </div>
+    <div id="toast" class="toast hidden">
+        Proveedor creado correctamente
     </div>
 </body>
 </html>
