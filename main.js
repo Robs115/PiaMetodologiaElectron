@@ -154,7 +154,7 @@ server.post('/api/productos', (req, res) => {
 
 // Obtener clientes
 server.get('/api/clientes', (req, res) => {
-    console.log("Solicitud GET /api/clientes");
+    
 
     const sql = `
         SELECT 
@@ -167,6 +167,7 @@ server.get('/api/clientes', (req, res) => {
     `;
 
     db.all(sql, [], (err, rows) => {
+        console.log("CLIENTES ENCONTRADOS:", rows);
         if (err) {
             console.error(err);
             res.status(500).json({ error: "Error en la consulta" });

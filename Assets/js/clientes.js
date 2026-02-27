@@ -1,4 +1,4 @@
-console.log("Cargando clientes.js...");
+
 const tablaBody = document.querySelector("#tablaClientes tbody");
 const buscador = document.getElementById("buscador");
 
@@ -9,7 +9,7 @@ function renderTabla(lista) {
 
     lista.forEach(cliente => {
         const fila = document.createElement("tr");
-        console.log("Cliente:", cliente);
+        
         fila.innerHTML = `
             <td>${cliente.id}</td>
             <td>${cliente.nombre}</td>
