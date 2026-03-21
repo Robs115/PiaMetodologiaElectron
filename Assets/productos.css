@@ -157,3 +157,39 @@ tbody tr:hover {
 .hidden {
     display: none;
 }
+
+/* Estilos para botones de acciones */
+.btn-editar {
+    background-color: #22c55e;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 8px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-editar:hover {
+    background-color: #16a34a;
+}
+
+.btn-eliminar {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-eliminar:hover {
+    background-color: #dc2626;
+}
+
+.acciones {
+    white-space: nowrap;
+}

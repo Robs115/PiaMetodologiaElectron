@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styleindex.css">
+    <link rel="stylesheet" href="/productoseditar.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <title>Editar Producto</title>
+    
+</head>
+<body>
+    <div class="cprincipal">
+        <nav class="sidebar">
+            <h2>Panel principal</h2>
+            <img src="/logoempresa.png" alt="Logo de empresa">
+            <ul>
+                <li><a href="/dashboard">Inicio</a></li>
+                <li><a href="/venta">Ventas</a></li>
+                <li><a href="/clientes">Clientes</a></li>
+                <li><a href="/productos">Productos</a></li>
+                <li><a href="/pedidos">Pedidos</a></li>
+                <li><a href="/proveedores">Proveedores</a></li>
+            </ul>
+        </nav>
+        
+        <main class="contenido">
+            <div class="form-container">
+                <h2>Editar Producto</h2>
+                <div id="loading" class="loading">Cargando datos...</div>
+                
+                <form id="formEditarProducto" style="display: none;">
+                    <div class="form-group">
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" id="nombre" name="nombre" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="descripcion">Descripción</label>
+                        <textarea id="descripcion" name="descripcion"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="precioCompra">Precio de Compra *</label>
+                        <input type="number" id="precioCompra" name="precioCompra" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="precioVenta">Precio de Venta *</label>
+                        <input type="number" id="precioVenta" name="precioVenta" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="idProveedor">Proveedor</label>
+                        <select id="idProveedor" name="idProveedor">
+                            <option value="">Seleccionar proveedor</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="stock">Stock *</label>
+                        <input type="number" id="stock" name="stock" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="/productos" class="btn-cancelar">Cancelar</a>
+                        <button type="submit" class="btn-guardar">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script src="/js/productos-editar.js"></script>
+</body>
+</html>

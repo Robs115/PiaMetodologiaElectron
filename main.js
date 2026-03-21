@@ -167,6 +167,12 @@ server.get('/venta/listar', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/ventas-listar.html'));
 });
 
+server.get('/productos/editar/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/productos-editar.html'));
+});
+
+
+//Productos
 
 // Obtener productos
 server.get('/api/productos', (req, res) => {
@@ -229,6 +235,152 @@ server.post('/api/productos', (req, res) => {
         });
     });
 });
+
+
+// Obtener producto para editar
+server.get('/api/productos/:id', (req, res) => {
+    const id = req.params.id;
+    
+    const sql = `
+        SELECT 
+            P.IDPRODUCTO as id,
+            P.NOMBRE as nombre,
+            P.DESCRIPCION as descripcion,
+            P.PRECIOCOMPRA as precioCompra,
+            P.PRECIOVENTA as precioVenta,
+            P.IDPROVEEDOR as idProveedor,
+            IFNULL(I.STOCK, 0) as stock
+        FROM PRODUCTOS P
+        LEFT JOIN INVENTARIO I ON P.IDPRODUCTO = I.IDPRODUCTO
+        WHERE P.IDPRODUCTO = ?
+    `;
+    
+    db.get(sql, [id], (err, row) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error en la consulta" });
+        }
+        
+        if (!row) {
+            return res.status(404).json({ error: "Producto no encontrado" });
+        }
+        
+        res.json(row);
+    });
+});
+
+// Actualizar producto
+server.put('/api/productos/:id', (req, res) => {
+    const id = req.params.id;
+    const { nombre, descripcion, precioCompra, precioVenta, idProveedor, stock } = req.body;
+    
+    console.log(`Actualizando producto ID: ${id}`);
+    
+    // Validar datos
+    if (!nombre || precioCompra <= 0 || precioVenta <= 0 || stock < 0) {
+        return res.status(400).json({ error: "Datos inválidos" });
+    }
+    
+    // Actualizar tabla PRODUCTOS
+    const sqlProducto = `
+        UPDATE PRODUCTOS 
+        SET NOMBRE = ?, 
+            DESCRIPCION = ?, 
+            PRECIOCOMPRA = ?, 
+            PRECIOVENTA = ?, 
+            IDPROVEEDOR = ?
+        WHERE IDPRODUCTO = ?
+    `;
+    
+    db.run(sqlProducto, [nombre, descripcion, precioCompra, precioVenta, idProveedor || null, id], function(err) {
+        if (err) {
+            console.error("Error al actualizar producto:", err);
+            return res.status(500).json({ error: "Error al actualizar producto: " + err.message });
+        }
+        
+        if (this.changes === 0) {
+            return res.status(404).json({ error: "Producto no encontrado" });
+        }
+        
+        console.log(`Producto ${id} actualizado, procediendo con inventario...`);
+        
+        // Manejar inventario
+        const sqlCheckInventario = `SELECT IDPRODUCTO FROM INVENTARIO WHERE IDPRODUCTO = ?`;
+        
+        db.get(sqlCheckInventario, [id], (err2, row) => {
+            if (err2) {
+                console.error("Error al verificar inventario:", err2);
+                return res.status(500).json({ error: "Error al verificar inventario" });
+            }
+            
+            if (row) {
+                // Actualizar inventario existente
+                const sqlUpdateInventario = `UPDATE INVENTARIO SET STOCK = ? WHERE IDPRODUCTO = ?`;
+                db.run(sqlUpdateInventario, [stock, id], (err3) => {
+                    if (err3) {
+                        console.error("Error al actualizar inventario:", err3);
+                        return res.status(500).json({ error: "Error al actualizar inventario" });
+                    }
+                    console.log(`Inventario actualizado para producto ${id}`);
+                    res.json({ success: true, message: "Producto actualizado correctamente" });
+                });
+            } else {
+                // Crear nuevo registro de inventario
+                const sqlInsertInventario = `INSERT INTO INVENTARIO (IDPRODUCTO, STOCK) VALUES (?, ?)`;
+                db.run(sqlInsertInventario, [id, stock], (err3) => {
+                    if (err3) {
+                        console.error("Error al insertar inventario:", err3);
+                        return res.status(500).json({ error: "Error al insertar inventario" });
+                    }
+                    console.log(`Inventario creado para producto ${id}`);
+                    res.json({ success: true, message: "Producto actualizado correctamente" });
+                });
+            }
+        });
+    });
+});
+
+// Eliminar producto
+server.delete('/api/productos/:id', (req, res) => {
+    const id = req.params.id;
+    
+    // Primero verificar si el producto existe
+    const sqlCheck = `SELECT IDPRODUCTO FROM PRODUCTOS WHERE IDPRODUCTO = ?`;
+    
+    db.get(sqlCheck, [id], (err, row) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error en la consulta" });
+        }
+        
+        if (!row) {
+            return res.status(404).json({ error: "Producto no encontrado" });
+        }
+        
+        // Eliminar primero de INVENTARIO (por la relación)
+        const sqlDeleteInventario = `DELETE FROM INVENTARIO WHERE IDPRODUCTO = ?`;
+        
+        db.run(sqlDeleteInventario, [id], (err2) => {
+            if (err2) {
+                console.error(err2);
+                return res.status(500).json({ error: "Error al eliminar inventario" });
+            }
+            
+            // Luego eliminar de PRODUCTOS
+            const sqlDeleteProducto = `DELETE FROM PRODUCTOS WHERE IDPRODUCTO = ?`;
+            
+            db.run(sqlDeleteProducto, [id], function(err3) {
+                if (err3) {
+                    console.error(err3);
+                    return res.status(500).json({ error: "Error al eliminar producto" });
+                }
+                
+                res.json({ success: true, message: "Producto eliminado correctamente" });
+            });
+        });
+    });
+});
+
 
 // Obtener pedidos
 server.get('/api/pedidos', (req, res) => {

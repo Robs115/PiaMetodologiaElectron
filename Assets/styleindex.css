@@ -33,7 +33,7 @@ main {
     position: fixed;
     overflow-y: auto; /* scroll interno si crece */
     height: 100vh; /* ocupa toda la pantalla */
-     top: 0;
+    top: 0;
 }
 
 
