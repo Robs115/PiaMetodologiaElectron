@@ -4,7 +4,7 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 
 
-const server = express(); // 👈 nombre diferente
+const server = express(); 
 const PORT = 3000;
 
 const db = new sqlite3.Database(path.join(__dirname, 'PiaMetodologia.db'), (err) => {
@@ -17,15 +17,13 @@ const db = new sqlite3.Database(path.join(__dirname, 'PiaMetodologia.db'), (err)
 
 function createWindow() {
     const win = new BrowserWindow({
-    width: 1200,
+    width: 1500,
     height: 800,
     webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
         contextIsolation: true
     }
 });
-
-    // 👇 MUY IMPORTANTE
     win.loadURL(`http://localhost:${PORT}`);
 }
 
@@ -560,8 +558,6 @@ server.post('/api/proveedores', (req, res) => {
 
 });
 
-// ========== ENDPOINTS PARA PROVEEDORES ==========
-
 // Obtener proveedor por ID (para editar)
 server.get('/api/proveedores/:id', (req, res) => {
     const id = req.params.id;
@@ -675,7 +671,7 @@ server.get('/proveedores/editar/:id', (req, res) => {
 
 //Ventas
 
-//Obrtener ventas
+//Obtener ventas
 server.get('/api/ventas', (req, res) => {
     
 
