@@ -717,6 +717,54 @@ server.get("/producto/:codigo", (req, res) => {
 });
 
 
+//Generar venta
+server.post('/api/ventas', (req, res) => {
+    const { fecha, idusuario, total, productos } = req.body;
+
+    const sqlVenta = `
+        INSERT INTO VENTAS
+        (FECHA, IDUSUARIO, TOTAL)
+        VALUES (?, ?, ?)
+    `;
+
+    db.run(sqlVenta, [fecha, idusuario, total], function(err) {
+        if (err) {
+            console.error("ERROR SQLITE:", err);
+            return res.status(500).json({ success: false });
+        }
+
+      
+        const idVenta = this.lastID;
+        console.log("INSERT OK, ID:", idVenta);
+
+        
+        const sqlDetalle = `
+            INSERT INTO DETALLEVENTA
+            (IDVENTA, IDPRODUCTO, CANTIDAD, PRECIOUNITARIO, SUBTOTAL)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+
+        productos.forEach(p => {
+            db.run(sqlDetalle, [
+                idVenta,
+                p.IDPRODUCTO,
+                p.cantidad,
+                p.PRECIO_UNITARIO,
+                p.SUBTOTAL
+            ], (err) => {
+                if (err) console.error("Error insertando detalle:", err);
+            });
+        });
+
+        
+        res.json({
+            success: true,
+            idVenta: idVenta
+        });
+    });
+});
+
+
 // Iniciar servidor
 server.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
