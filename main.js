@@ -323,6 +323,51 @@ server.post('/api/proveedores', (req, res) => {
 
 });
 
+//Obrtener ventas
+server.get('/api/ventas', (req, res) => {
+    
+
+    const sql = `
+        SELECT 
+            IDVENTA as id,
+            FECHA as fecha,
+            IDUSUARIO as idusuario,
+            TOTAL as total
+        FROM VENTAS
+    `;
+
+    db.all(sql, [], (err, rows) => {
+        console.log("VENTAS ENCONTRADAS:", rows);
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error en la consulta" });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+//buscar producto en venta
+server.get("/producto/:codigo", (req, res) => {
+    const codigo = req.params.codigo;
+
+    db.get(
+        "SELECT * FROM productos WHERE IDPRODUCTO = ?",
+        [codigo],
+        (err, row) => {
+            if (err) {
+                return res.status(500).json({ error: "Error en la base de datos" });
+            }
+
+            if (!row) {
+                return res.json({ error: "Producto no encontrado" });
+            }
+
+            res.json(row);
+        }
+    );
+});
+
 
 // Iniciar servidor
 server.listen(PORT, () => {
