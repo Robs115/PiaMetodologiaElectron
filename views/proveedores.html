@@ -4,38 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--Bootstrap-->
-   <link rel="stylesheet" href="/styleindex.css" >
+    <link rel="stylesheet" href="/styleindex.css">
+    <link rel="stylesheet" href="/proveedores.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <title>VidaVet - Veterinaria profesional</title>
+    <title>Gestión de Proveedores</title>
 </head>
 <body>
     <div class="cprincipal">
         <nav class="sidebar">
-
             <h2>Panel principal</h2>
             <img src="/logoempresa.png" alt="Logo de empresa">
             <ul>
                 <li><a href="/dashboard">Inicio</a></li>
-            <li><a href="/venta">Ventas</a></li>
-            <li><a href="/clientes">Clientes</a></li>
-            <li><a href="/productos">Productos</a></li>
-            <li><a href="/pedidos">Pedidos</a></li>
-            <li><a href="/proveedores">Proveedores</a></li>
+                <li><a href="/venta">Ventas</a></li>
+                <li><a href="/clientes">Clientes</a></li>
+                <li><a href="/productos">Productos</a></li>
+                <li><a href="/pedidos">Pedidos</a></li>
+                <li><a href="/proveedores">Proveedores</a></li>
             </ul>
-            
-
         </nav>
 
-
-        
-        
-                <main class="contenido">
-            <div class="proveedor-container">
-
+        <main class="contenido">
+            <div class="proveedores-container">
                 <div class="header-proveedores">
                     <h2>Gestión de Proveedores</h2>
-                    <input type="text" id="buscador" placeholder="Buscar proveedor...">
+                    <div class="acciones-header">
+                        <input type="text" id="buscador" placeholder="Buscar proveedor...">
+                        <a href="/proveedores/crear" class="btn btn-crear">Crear proveedor</a>
+                    </div>
                 </div>
 
                 <div class="tabla-contenedor">
@@ -44,30 +40,22 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre</th>
-                                <th>Telefono</th>
+                                <th>Teléfono</th>
                                 <th>Email</th>
-                               <th>Dirección</th> 
-                               <th>Activo</th>
+                                <th>Dirección</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            <!-- Los datos se cargarán dinámicamente con JavaScript -->
                         </tbody>
                     </table>
                 </div>
-
             </div>
-
-   
-            <link rel="stylesheet" href="proveedores.css">
-           <button class="btn crear"><a href="/proveedores/crear">Crear proveedor</a></button>
-
         </main>
     </div>
-        <script src="/js/proveedores.js"></script>
 
-    </div>
-    </div>
+    <script src="/js/proveedores.js"></script>
 </body>
 </html>

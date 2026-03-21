@@ -382,6 +382,8 @@ server.delete('/api/productos/:id', (req, res) => {
 });
 
 
+//Pedidos
+
 // Obtener pedidos
 server.get('/api/pedidos', (req, res) => {
     
@@ -438,6 +440,9 @@ server.post('/api/pedidos', (req, res) => {
     });
 
 });
+
+
+//Clientes
 
 // Obtener clientes
 server.get('/api/clientes', (req, res) => {
@@ -497,6 +502,8 @@ server.post('/api/clientes', (req, res) => {
 });
 
 
+//Proveedores
+
 // Obtener proveedores
 server.get('/api/proveedores', (req, res) => {
     
@@ -552,6 +559,121 @@ server.post('/api/proveedores', (req, res) => {
     });
 
 });
+
+// ========== ENDPOINTS PARA PROVEEDORES ==========
+
+// Obtener proveedor por ID (para editar)
+server.get('/api/proveedores/:id', (req, res) => {
+    const id = req.params.id;
+    
+    const sql = `
+        SELECT 
+            IDPROVEEDOR as id,
+            NOMBRE as nombre,
+            TELEFONO as telefono,
+            EMAIL as email,
+            DIRECCION as direccion,
+            ACTIVO as activo
+        FROM PROVEEDORES
+        WHERE IDPROVEEDOR = ?
+    `;
+    
+    db.get(sql, [id], (err, row) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error en la consulta" });
+        }
+        
+        if (!row) {
+            return res.status(404).json({ error: "Proveedor no encontrado" });
+        }
+        
+        res.json(row);
+    });
+});
+
+// Actualizar proveedor
+server.put('/api/proveedores/:id', (req, res) => {
+    const id = req.params.id;
+    const { nombre, telefono, email, direccion, activo } = req.body;
+    
+    const sql = `
+        UPDATE PROVEEDORES 
+        SET NOMBRE = ?, 
+            TELEFONO = ?, 
+            EMAIL = ?, 
+            DIRECCION = ?,
+            ACTIVO = ?
+        WHERE IDPROVEEDOR = ?
+    `;
+    
+    db.run(sql, [nombre, telefono, email, direccion, activo, id], function(err) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error al actualizar proveedor" });
+        }
+        
+        if (this.changes === 0) {
+            return res.status(404).json({ error: "Proveedor no encontrado" });
+        }
+        
+        res.json({ success: true, message: "Proveedor actualizado correctamente" });
+    });
+});
+
+// Eliminar proveedor
+server.delete('/api/proveedores/:id', (req, res) => {
+    const id = req.params.id;
+    
+    // Primero verificar si el proveedor existe
+    const sqlCheck = `SELECT IDPROVEEDOR FROM PROVEEDORES WHERE IDPROVEEDOR = ?`;
+    
+    db.get(sqlCheck, [id], (err, row) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error en la consulta" });
+        }
+        
+        if (!row) {
+            return res.status(404).json({ error: "Proveedor no encontrado" });
+        }
+        
+        // Verificar si tiene productos asociados
+        const sqlCheckProductos = `SELECT COUNT(*) as total FROM PRODUCTOS WHERE IDPROVEEDOR = ?`;
+        
+        db.get(sqlCheckProductos, [id], (err2, result) => {
+            if (err2) {
+                console.error(err2);
+                return res.status(500).json({ error: "Error al verificar productos asociados" });
+            }
+            
+            if (result.total > 0) {
+                return res.status(400).json({ 
+                    error: `No se puede eliminar el proveedor porque tiene ${result.total} producto(s) asociado(s)` 
+                });
+            }
+            
+            // Eliminar proveedor
+            const sqlDelete = `DELETE FROM PROVEEDORES WHERE IDPROVEEDOR = ?`;
+            
+            db.run(sqlDelete, [id], function(err3) {
+                if (err3) {
+                    console.error(err3);
+                    return res.status(500).json({ error: "Error al eliminar proveedor" });
+                }
+                
+                res.json({ success: true, message: "Proveedor eliminado correctamente" });
+            });
+        });
+    });
+});
+
+// Agregar la ruta para la página de edición
+server.get('/proveedores/editar/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/proveedores-editar.html'));
+});
+
+//Ventas
 
 //Obrtener ventas
 server.get('/api/ventas', (req, res) => {
