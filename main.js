@@ -628,6 +628,100 @@ server.post('/api/clientes', (req, res) => {
 
 });
 
+// Obtener cliente por ID (para editar)
+server.get('/api/clientes/:id', (req, res) => {
+    const id = req.params.id;
+    
+    const sql = `
+        SELECT 
+            IDCLIENTE as id,
+            NOMBRE as nombre,
+            TELEFONO as telefono,
+            EMAIL as email,
+            DIRECCION as direccion
+        FROM CLIENTES
+        WHERE IDCLIENTE = ?
+    `;
+    
+    db.get(sql, [id], (err, row) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error en la consulta" });
+        }
+        
+        if (!row) {
+            return res.status(404).json({ error: "Cliente no encontrado" });
+        }
+        
+        res.json(row);
+    });
+});
+
+// Actualizar cliente
+server.put('/api/clientes/:id', (req, res) => {
+    const id = req.params.id;
+    const { nombre, telefono, email, direccion } = req.body;
+    
+    const sql = `
+        UPDATE CLIENTES 
+        SET NOMBRE = ?, 
+            TELEFONO = ?, 
+            EMAIL = ?, 
+            DIRECCION = ?
+        WHERE IDCLIENTE = ?
+    `;
+    
+    db.run(sql, [nombre, telefono, email, direccion, id], function(err) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error al actualizar cliente" });
+        }
+        
+        if (this.changes === 0) {
+            return res.status(404).json({ error: "Cliente no encontrado" });
+        }
+        
+        res.json({ success: true, message: "Cliente actualizado correctamente" });
+    });
+});
+
+// Eliminar cliente
+// Eliminar cliente
+server.delete('/api/clientes/:id', (req, res) => {
+    const id = req.params.id;
+    
+    // Verificar si el cliente existe
+    const sqlCheck = `SELECT IDCLIENTE FROM CLIENTES WHERE IDCLIENTE = ?`;
+    
+    db.get(sqlCheck, [id], (err, row) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error en la consulta" });
+        }
+        
+        if (!row) {
+            return res.status(404).json({ error: "Cliente no encontrado" });
+        }
+        
+        // Eliminar cliente
+        const sqlDelete = `DELETE FROM CLIENTES WHERE IDCLIENTE = ?`;
+        
+        db.run(sqlDelete, [id], function(err2) {
+            if (err2) {
+                console.error(err2);
+                return res.status(500).json({ error: "Error al eliminar cliente: " + err2.message });
+            }
+            
+            res.json({ success: true, message: "Cliente eliminado correctamente" });
+        });
+    });
+});
+
+// Agregar la ruta para la página de edición
+server.get('/clientes/editar/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/clientes-editar.html'));
+});
+
 
 //Proveedores
 
