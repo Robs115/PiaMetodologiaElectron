@@ -4,35 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--Bootstrap-->
-   <link rel="stylesheet" href="/styleindex.css" >
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/styleindex.css" >
+    <link rel="stylesheet" href="/dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
-    <title>VidaVet - Veterinaria profesional</title>
+    <title>Dashboard</title>
 </head>
 <body>
-    <div class="cprincipal">
-        <nav class="sidebar">
 
-            <h2>Panel principal</h2>
-            <img src="/logoempresa.png" alt="Logo de empresa">
-            <ul>
-                <li><a href="/dashboard">Inicio</a></li>
-            <li><a href="/venta">Ventas</a></li>
-            <li><a href="/clientes">Clientes</a></li>
-            <li><a href="/productos">Productos</a></li>
-            <li><a href="/pedidos">Pedidos</a></li>
-            <li><a href="/proveedores">Proveedores</a></li>
-            </ul>
+<div class="d-flex">
+
+    <!-- Sidebar -->
+    <nav class="sidebar p-3">
+        <h3 class="text-white">VidaVet</h3>
+        <ul>
+            <li><a href="#">Inicio</a></li>
+            <li><a href="#">Ventas</a></li>
+            <li><a href="#">Clientes</a></li>
+            <li><a href="#">Productos</a></li>
+        </ul>
+    </nav>
+
+    <!-- Contenido -->
+    <main class="flex-grow-1 p-4">
+
+        <h2>Dashboard</h2>
+
+        <!-- KPIs -->
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card kpi">
+                    <h6>Ventas Totales</h6>
+                    <h2 id="ventas">$0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card kpi">
+                    <h6>Productos</h6>
+                    <h2 id="productos">0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card kpi">
+                    <h6>Clientes</h6>
+                    <h2 id="clientes">0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card kpi alert-card">
+                    <h6>Stock Bajo</h6>
+                    <h2 id="stock">0</h2>
+                </div>
+            </div>
+
             
+        </div>
 
-        </nav>
+        <!-- Gráficas -->
+        <div class="row mt-5">
+            <div class="col-md-8">
+                <div class="card p-3">
+                    <h5>Ventas por día</h5>
+                    <canvas id="ventasChart"></canvas>
+                </div>
+            </div>
 
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <h5>Top productos</h5>
+                    <ul id="topProductos"></ul>
+                </div>
+            </div>
+        </div>
 
-        
-        <main class="container">
-           <h2>dashboards</h2>
-            
-        </main>
-    </div>
+        <!-- Tabla -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <div class="card p-3">
+                    <h5>Últimas ventas</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaVentas"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/rendererdashboard.js"></script>
+
 </body>
 </html>

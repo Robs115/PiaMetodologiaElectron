@@ -11,6 +11,10 @@ body {
     background-color: #f4f6f9;
 }
 
+main {
+    margin-left: 220px;
+    padding: 20px;
+}
 
 .cprincipal {
     display: flex;
@@ -19,13 +23,17 @@ body {
 
 
 .sidebar {
-    width: 260px;
+    width: 220px;
     background: linear-gradient(180deg, #111827, #1f2937);
     color: #fff;
     padding: 25px 20px;
     display: flex;
     flex-direction: column;
     box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    position: fixed;
+    overflow-y: auto; /* scroll interno si crece */
+    height: 100vh; /* ocupa toda la pantalla */
+     top: 0;
 }
 
 

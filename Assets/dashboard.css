@@ -1,0 +1,18 @@
+body {
+    background-color: #f5f6fa;
+}
+
+
+.kpi {
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.alert-card {
+    background: #ff6b6b;
+    color: white;
+}
+

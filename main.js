@@ -1,4 +1,4 @@
-const { app: electronApp, BrowserWindow } = require('electron');
+const { app: electronApp, BrowserWindow, ipcMain } = require('electron');
 const express = require('express');
 const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
@@ -15,24 +15,102 @@ const db = new sqlite3.Database(path.join(__dirname, 'PiaMetodologia.db'), (err)
     }
 });
 
-
-
-
-
-
-
-
 function createWindow() {
     const win = new BrowserWindow({
-        width: 1280,
-        height: 720
-    });
+    width: 1200,
+    height: 800,
+    webPreferences: {
+        preload: path.join(__dirname, 'preload.js'),
+        contextIsolation: true
+    }
+});
 
     // 👇 MUY IMPORTANTE
     win.loadURL(`http://localhost:${PORT}`);
 }
 
 electronApp.whenReady().then(createWindow);
+
+//dashboard
+ipcMain.handle('obtenerDashboard', async () => {
+    return new Promise((resolve, reject) => {
+
+        db.get(`
+            SELECT 
+                (SELECT COUNT(*) FROM PRODUCTOS) AS totalProductos,
+                (SELECT COUNT(*) FROM CLIENTES) AS totalClientes,
+                (SELECT COUNT(*) FROM USUARIOS) AS totalUsuarios,
+                (SELECT COUNT(*) FROM PROVEEDORES) AS totalProveedores,
+                (SELECT COUNT(*) FROM PEDIDOS) AS totalPedidos,
+                (SELECT IFNULL(SUM(TOTAL),0) FROM VENTAS) AS totalVentas,
+                (
+                    SELECT COUNT(*) 
+                    FROM INVENTARIO 
+                    WHERE STOCK <= STOCKMINIMO
+                ) AS stockBajo
+        `, (err, resumen) => {
+            if (err) return reject(err);
+
+            db.all(`
+                SELECT FECHA, TOTAL
+                FROM VENTAS
+                ORDER BY FECHA DESC
+                LIMIT 5
+            `, (err2, ultimas) => {
+                if (err2) return reject(err2);
+
+                db.all(`
+                    SELECT p.NOMBRE, SUM(d.CANTIDAD) as total
+                    FROM DETALLEVENTA d
+                    JOIN PRODUCTOS p ON d.IDPRODUCTO = p.IDPRODUCTO
+                    GROUP BY p.NOMBRE
+                    ORDER BY total DESC
+                    LIMIT 5
+                `, (err3, topProductos) => {
+                    if (err3) return reject(err3);
+
+                    db.all(`
+                        SELECT DATE(FECHA) as fecha, SUM(TOTAL) as total
+                        FROM VENTAS
+                        GROUP BY DATE(FECHA)
+                    `, (err4, grafica) => {
+                        if (err4) return reject(err4);
+
+                        db.all(`
+                            SELECT u.NOMBRE, SUM(v.TOTAL) as total
+                            FROM VENTAS v
+                            JOIN USUARIOS u ON v.IDUSUARIO = u.IDUSUARIO
+                            GROUP BY u.NOMBRE
+                            ORDER BY total DESC
+                            LIMIT 5
+                        `, (err5, usuariosTop) => {
+                            if (err5) return reject(err5);
+
+                            db.all(`
+                                SELECT p.NOMBRE, COUNT(*) as total
+                                FROM PEDIDOS ped
+                                JOIN PROVEEDORES p ON ped.IDPROVEEDOR = p.IDPROVEEDOR
+                                GROUP BY p.NOMBRE
+                                ORDER BY total DESC
+                            `, (err6, proveedoresTop) => {
+                                if (err6) return reject(err6);
+
+                                resolve({
+                                    ...resumen,
+                                    ultimasVentas: ultimas,
+                                    topProductos,
+                                    ventasPorDia: grafica,
+                                    usuariosTop,
+                                    proveedoresTop
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
 
 
 
