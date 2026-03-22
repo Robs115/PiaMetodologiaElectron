@@ -3,7 +3,30 @@ const tabla = document.querySelector("#tablaVentas tbody");
 const realizar = document.querySelector(".btn-realizar-venta");
 const totalSpan = document.getElementById("total-venta");
 
-let venta = []; // cada elemento: {IDPRODUCTO, NOMBRE, PRECIOVENTA, cantidad}
+let venta = [];
+
+// Función para limpiar el nombre del producto
+function limpiarNombre(nombre) {
+    if (!nombre) return '';
+    
+    let nombreLimpio = nombre
+        .replace(/_/g, '')
+        .replace(/\*\*/g, '')
+        .replace(/\*/g, '')
+        .replace(/`/g, '')
+        .replace(/#/g, '')
+        .replace(/\[/g, '')
+        .replace(/\]/g, '')
+        .replace(/\(/g, '')
+        .replace(/\)/g, '')
+        .trim();
+    
+    if (nombreLimpio.includes('_')) {
+        nombreLimpio = nombreLimpio.split('_')[0];
+    }
+    
+    return nombreLimpio;
+}
 
 input.addEventListener("keydown", async (e) => {
     if (e.key === "Enter") {
@@ -11,7 +34,7 @@ input.addEventListener("keydown", async (e) => {
         if (!codigo) return;
 
         try {
-            const res = await fetch(`http://localhost:3000/producto/${codigo}`);
+            const res = await fetch(`/producto/${codigo}`);
             const data = await res.json();
 
             if (data.error) {
@@ -20,6 +43,7 @@ input.addEventListener("keydown", async (e) => {
                 return;
             }
 
+            data.NOMBRE = limpiarNombre(data.NOMBRE);
             agregarProducto(data);
             input.value = "";
 
@@ -37,7 +61,9 @@ function agregarProducto(producto) {
         existente.cantidad++;
     } else {
         venta.push({
-            ...producto,
+            IDPRODUCTO: producto.IDPRODUCTO,
+            NOMBRE: limpiarNombre(producto.NOMBRE),
+            PRECIOVENTA: producto.PRECIOVENTA,
             cantidad: 1
         });
     }
@@ -46,6 +72,8 @@ function agregarProducto(producto) {
 }
 
 function renderTabla() {
+    if (!tabla) return;
+    
     tabla.innerHTML = "";
     let total = 0;
 
@@ -72,30 +100,33 @@ function renderTabla() {
         tabla.innerHTML += fila;
     });
     
-    // Actualizar total
     if (totalSpan) {
         totalSpan.textContent = `$${total.toFixed(2)}`;
     }
     
-    // Escuchar cambios en los inputs
     document.querySelectorAll(".input-cantidad").forEach(inputCantidad => {
-        inputCantidad.addEventListener("change", (e) => {
-            const index = e.target.dataset.index;
-            let nuevaCantidad = parseInt(e.target.value);
-
-            if (nuevaCantidad < 1 || isNaN(nuevaCantidad)) {
-                nuevaCantidad = 1;
-                e.target.value = 1;
-            }
-
-            venta[index].cantidad = nuevaCantidad;
-            renderTabla();
-        });
+        inputCantidad.removeEventListener("change", handleCantidadChange);
+        inputCantidad.addEventListener("change", handleCantidadChange);
     });
+}
+
+function handleCantidadChange(e) {
+    const index = e.target.dataset.index;
+    let nuevaCantidad = parseInt(e.target.value);
+
+    if (nuevaCantidad < 1 || isNaN(nuevaCantidad)) {
+        nuevaCantidad = 1;
+        e.target.value = 1;
+    }
+
+    venta[index].cantidad = nuevaCantidad;
+    renderTabla();
 }
 
 function mostrarAlerta(mensaje, tipo = "error") {
     const alerta = document.querySelector(".alert");
+    if (!alerta) return;
+    
     alerta.style.display = "block";
     alerta.textContent = mensaje;
     alerta.style.backgroundColor = tipo === "error" ? "#fee2e2" : "#dcfce7";
@@ -106,65 +137,66 @@ function mostrarAlerta(mensaje, tipo = "error") {
     }, 3000);
 }
 
-realizar.addEventListener("click", async () => {
-    if (venta.length === 0) {
-        mostrarAlerta("No hay productos en la venta", "error");
-        input.focus();
-        return;
-    }
-
-    const fecha = new Date().toISOString().split('T')[0];
-    const idusuario = 1;
-    let total = 0;
-
-    venta.forEach(p => {
-        total += p.PRECIOVENTA * p.cantidad;
-    });
-
-    const productosDetalle = venta.map(p => ({
-        IDPRODUCTO: p.IDPRODUCTO,
-        cantidad: p.cantidad,
-        PRECIO_UNITARIO: p.PRECIOVENTA,
-        SUBTOTAL: p.PRECIOVENTA * p.cantidad
-    }));
-
-    try {
-        const res = await fetch("http://localhost:3000/api/ventas", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                fecha,
-                idusuario,
-                total,
-                productos: productosDetalle
-            })
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-            mostrarAlerta("Venta realizada correctamente", "success");
-            
-            // Limpiar venta
-            venta = [];
-            renderTabla();
-            input.value = "";
-            
-            setTimeout(() => {
-                input.focus();
-            }, 0);
-
-        } else {
-            mostrarAlerta("Error al guardar la venta", "error");
+if (realizar) {
+    realizar.addEventListener("click", async () => {
+        if (venta.length === 0) {
+            mostrarAlerta("No hay productos en la venta", "error");
+            if (input) input.focus();
+            return;
         }
 
-    } catch (error) {
-        console.error("Error:", error);
-        mostrarAlerta("Error de conexión con el servidor", "error");
-    }
-});
+        const idusuario = 1;
+        let total = 0;
+
+        venta.forEach(p => {
+            total += p.PRECIOVENTA * p.cantidad;
+        });
+
+        const productosDetalle = venta.map(p => ({
+            IDPRODUCTO: p.IDPRODUCTO,
+            cantidad: p.cantidad,
+            PRECIO_UNITARIO: p.PRECIOVENTA,
+            SUBTOTAL: p.PRECIOVENTA * p.cantidad
+        }));
+
+        console.log('Guardando venta...');
+
+        try {
+            const res = await fetch("/api/ventas", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    idusuario,
+                    total,
+                    productos: productosDetalle
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                mostrarAlerta("Venta realizada correctamente", "success");
+                
+                venta = [];
+                renderTabla();
+                if (input) input.value = "";
+                
+                setTimeout(() => {
+                    if (input) input.focus();
+                }, 0);
+
+            } else {
+                mostrarAlerta("Error al guardar la venta", "error");
+            }
+
+        } catch (error) {
+            console.error("Error:", error);
+            mostrarAlerta("Error de conexión con el servidor", "error");
+        }
+    });
+}
 
 function escapeHtml(text) {
     if (!text) return '';

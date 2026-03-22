@@ -4,15 +4,19 @@ const ventaId = window.location.pathname.split('/')[3];
 const form = document.getElementById("formEditarVenta");
 const loadingDiv = document.getElementById("loading");
 
+console.log('Editando venta ID:', ventaId);
+
 async function cargarVenta() {
     try {
         const respuesta = await fetch(`/api/ventas/${ventaId}`);
         
         if (!respuesta.ok) {
-            throw new Error('Venta no encontrada');
+            const errorData = await respuesta.json();
+            throw new Error(errorData.error || 'Venta no encontrada');
         }
         
         const venta = await respuesta.json();
+        console.log('Venta cargada para editar:', venta);
         
         // Formatear fecha para input type="date"
         if (venta.fecha) {
@@ -95,49 +99,51 @@ function mostrarNotificacion(mensaje, tipo = "success") {
     }, 2000);
 }
 
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    
-    const fecha = document.getElementById("fecha").value;
-    const idusuario = parseInt(document.getElementById("idusuario").value);
-    
-    if (!fecha) {
-        mostrarNotificacion("La fecha es obligatoria", "error");
-        return;
-    }
-    
-    if (!idusuario || idusuario <= 0) {
-        mostrarNotificacion("El ID de usuario es obligatorio", "error");
-        return;
-    }
-    
-    const venta = {
-        fecha,
-        idusuario
-    };
-    
-    try {
-        const respuesta = await fetch(`/api/ventas/${ventaId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(venta)
-        });
+if (form) {
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
         
-        if (!respuesta.ok) {
-            const error = await respuesta.json();
-            throw new Error(error.error || 'Error al actualizar');
+        const fecha = document.getElementById("fecha").value;
+        const idusuario = parseInt(document.getElementById("idusuario").value);
+        
+        if (!fecha) {
+            mostrarNotificacion("La fecha es obligatoria", "error");
+            return;
         }
         
-        const resultado = await respuesta.json();
-        mostrarNotificacion(resultado.message || "Venta actualizada correctamente", "success");
+        if (!idusuario || idusuario <= 0) {
+            mostrarNotificacion("El ID de usuario es obligatorio", "error");
+            return;
+        }
         
-    } catch (error) {
-        console.error('Error:', error);
-        mostrarNotificacion(error.message || "Error al actualizar la venta", "error");
-    }
-});
+        const venta = {
+            fecha,
+            idusuario
+        };
+        
+        try {
+            const respuesta = await fetch(`/api/ventas/${ventaId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(venta)
+            });
+            
+            if (!respuesta.ok) {
+                const error = await respuesta.json();
+                throw new Error(error.error || 'Error al actualizar');
+            }
+            
+            const resultado = await respuesta.json();
+            mostrarNotificacion(resultado.message || "Venta actualizada correctamente", "success");
+            
+        } catch (error) {
+            console.error('Error:', error);
+            mostrarNotificacion(error.message || "Error al actualizar la venta", "error");
+        }
+    });
+}
 
 // Agregar estilos adicionales
 const style = document.createElement('style');

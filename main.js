@@ -26,6 +26,7 @@ function createWindow() {
         contextIsolation: true
     }
 });
+
     win.loadURL(`http://localhost:${PORT}/login`);
 }
 
@@ -1002,59 +1003,58 @@ server.get("/producto/:codigo", (req, res) => {
 
 
 //Generar venta
+// Endpoint para crear una nueva venta (con fecha automática del servidor)
 server.post('/api/ventas', (req, res) => {
-    const { fecha, idusuario, total, productos } = req.body;
+    const { idusuario, total, productos } = req.body;
+    
 
+    const now = new Date();
+    const mexicoDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Mexico_City' }));
+    const year = mexicoDate.getFullYear();
+    const month = String(mexicoDate.getMonth() + 1).padStart(2, '0');
+    const day = String(mexicoDate.getDate()).padStart(2, '0');
+    const fecha = `${year}-${month}-${day}`;
+    
+    
+    // Insertar la venta
     const sqlVenta = `
-        INSERT INTO VENTAS
-        (FECHA, IDUSUARIO, TOTAL)
+        INSERT INTO VENTAS (FECHA, IDUSUARIO, TOTAL)
         VALUES (?, ?, ?)
     `;
-
+    
     db.run(sqlVenta, [fecha, idusuario, total], function(err) {
         if (err) {
-            console.error("ERROR SQLITE:", err);
-            return res.status(500).json({ success: false });
+            console.error('Error al crear venta:', err);
+            return res.status(500).json({ error: "Error al crear venta: " + err.message });
         }
-
-      
+        
         const idVenta = this.lastID;
-        console.log("INSERT OK, ID:", idVenta);
-
+        console.log(`Venta creada con ID: ${idVenta}`);
         
-        const sqlDetalle = `
-            INSERT INTO DETALLEVENTA
-            (IDVENTA, IDPRODUCTO, CANTIDAD, PRECIOUNITARIO, SUBTOTAL)
-            VALUES (?, ?, ?, ?, ?)
-        `;
-        const sqlUpdateStock = `
-            UPDATE INVENTARIO
-            SET STOCK = STOCK - ?
-            WHERE IDPRODUCTO = ?
-        `;
-        productos.forEach(p => {
-            db.run(sqlUpdateStock, [p.cantidad, p.IDPRODUCTO], (err) => {
-                if (err) console.error("Error actualizando stock:", err);
-            });
-
-        });
-
-        productos.forEach(p => {
-            db.run(sqlDetalle, [
-                idVenta,
-                p.IDPRODUCTO,
-                p.cantidad,
-                p.PRECIO_UNITARIO,
-                p.SUBTOTAL
-            ], (err) => {
-                if (err) console.error("Error insertando detalle:", err);
-            });
-        });
-
+        if (!productos || productos.length === 0) {
+            return res.json({ success: true, idVenta });
+        }
         
-        res.json({
-            success: true,
-            idVenta: idVenta
+        // Insertar los detalles de la venta
+        let detallesInsertados = 0;
+        
+        productos.forEach(producto => {
+            const sqlDetalle = `
+                INSERT INTO DETALLEVENTA (IDVENTA, IDPRODUCTO, CANTIDAD, PRECIOUNITARIO, SUBTOTAL)
+                VALUES (?, ?, ?, ?, ?)
+            `;
+            
+            db.run(sqlDetalle, [idVenta, producto.IDPRODUCTO, producto.cantidad, producto.PRECIO_UNITARIO, producto.SUBTOTAL], (err2) => {
+                if (err2) {
+                    console.error('Error al insertar detalle:', err2);
+                }
+                
+                detallesInsertados++;
+                
+                if (detallesInsertados === productos.length) {
+                    res.json({ success: true, idVenta });
+                }
+            });
         });
     });
 });
@@ -1096,7 +1096,7 @@ WHERE d.IDVENTA = ?;
 });
 
 
-// Obtener todas las ventas con detalles
+// Obtener todas las ventas
 server.get('/api/ventas', (req, res) => {
     const sql = `
         SELECT 
@@ -1112,16 +1112,17 @@ server.get('/api/ventas', (req, res) => {
     
     db.all(sql, [], (err, rows) => {
         if (err) {
-            console.error(err);
+            console.error('Error en /api/ventas:', err);
             return res.status(500).json({ error: "Error en la consulta" });
         }
         res.json(rows);
     });
 });
 
-// Obtener venta por ID con sus detalles
+// Obtener una venta específica con sus detalles
 server.get('/api/ventas/:id', (req, res) => {
     const id = req.params.id;
+    console.log(`Buscando venta con ID: ${id}`);
     
     const sqlVenta = `
         SELECT 
@@ -1137,22 +1138,23 @@ server.get('/api/ventas/:id', (req, res) => {
     
     db.get(sqlVenta, [id], (err, venta) => {
         if (err) {
-            console.error(err);
+            console.error('Error al obtener venta:', err);
             return res.status(500).json({ error: "Error en la consulta" });
         }
         
         if (!venta) {
+            console.log(`Venta con ID ${id} no encontrada`);
             return res.status(404).json({ error: "Venta no encontrada" });
         }
         
-        // Obtener detalles de la venta
+        // Obtener detalles de la venta con los nombres correctos de columnas
         const sqlDetalles = `
             SELECT 
                 D.IDDETALLE as id,
                 D.IDPRODUCTO as idproducto,
                 P.NOMBRE as nombre_producto,
                 D.CANTIDAD as cantidad,
-                D.PRECIO_UNITARIO as precio_unitario,
+                D.PRECIOUNITARIO as precio_unitario,
                 D.SUBTOTAL as subtotal
             FROM DETALLEVENTA D
             LEFT JOIN PRODUCTOS P ON D.IDPRODUCTO = P.IDPRODUCTO
@@ -1161,22 +1163,24 @@ server.get('/api/ventas/:id', (req, res) => {
         
         db.all(sqlDetalles, [id], (err2, detalles) => {
             if (err2) {
-                console.error(err2);
+                console.error('Error al obtener detalles:', err2);
                 return res.status(500).json({ error: "Error al obtener detalles" });
             }
             
             res.json({
                 ...venta,
-                detalles
+                detalles: detalles || []
             });
         });
     });
 });
 
-// Actualizar venta (solo fecha y usuario, los detalles se manejan aparte)
+// Actualizar venta (solo fecha y usuario)
 server.put('/api/ventas/:id', (req, res) => {
     const id = req.params.id;
     const { fecha, idusuario } = req.body;
+    
+    console.log(`Actualizando venta ID: ${id}`, { fecha, idusuario });
     
     const sql = `
         UPDATE VENTAS 
@@ -1187,8 +1191,8 @@ server.put('/api/ventas/:id', (req, res) => {
     
     db.run(sql, [fecha, idusuario, id], function(err) {
         if (err) {
-            console.error(err);
-            return res.status(500).json({ error: "Error al actualizar venta" });
+            console.error('Error al actualizar venta:', err);
+            return res.status(500).json({ error: "Error al actualizar venta: " + err.message });
         }
         
         if (this.changes === 0) {
@@ -1199,16 +1203,17 @@ server.put('/api/ventas/:id', (req, res) => {
     });
 });
 
-// Eliminar venta y sus detalles
+// Eliminar venta
 server.delete('/api/ventas/:id', (req, res) => {
     const id = req.params.id;
+    console.log(`Eliminando venta ID: ${id}`);
     
     // Verificar si la venta existe
     const sqlCheck = `SELECT IDVENTA FROM VENTAS WHERE IDVENTA = ?`;
     
     db.get(sqlCheck, [id], (err, row) => {
         if (err) {
-            console.error(err);
+            console.error('Error al verificar venta:', err);
             return res.status(500).json({ error: "Error en la consulta" });
         }
         
@@ -1221,7 +1226,7 @@ server.delete('/api/ventas/:id', (req, res) => {
         
         db.run(sqlDeleteDetalles, [id], function(err2) {
             if (err2) {
-                console.error(err2);
+                console.error('Error al eliminar detalles:', err2);
                 return res.status(500).json({ error: "Error al eliminar detalles de la venta" });
             }
             
@@ -1230,7 +1235,7 @@ server.delete('/api/ventas/:id', (req, res) => {
             
             db.run(sqlDeleteVenta, [id], function(err3) {
                 if (err3) {
-                    console.error(err3);
+                    console.error('Error al eliminar venta:', err3);
                     return res.status(500).json({ error: "Error al eliminar venta" });
                 }
                 
@@ -1240,18 +1245,16 @@ server.delete('/api/ventas/:id', (req, res) => {
     });
 });
 
-// Agregar la ruta para la página de edición
+// Ruta para la página de edición
 server.get('/ventas/editar/:id', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/ventas-editar.html'));
 });
 
-// Agregar la ruta para detalle de venta
+// Ruta para el detalle de venta
 server.get('/detalle-venta', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/detalle-venta.html'));
 });
 
-
-  
 
 
 // Iniciar servidor

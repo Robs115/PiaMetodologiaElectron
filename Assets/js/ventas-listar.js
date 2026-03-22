@@ -51,7 +51,7 @@ async function cargarVentas() {
 }
 
 // Función para ver detalle de venta
-window.verDetalle = async (id) => {
+window.verDetalle = (id) => {
     try {
         window.location.href = `/detalle-venta?idVenta=${id}`;
     } catch (error) {
@@ -61,7 +61,7 @@ window.verDetalle = async (id) => {
 };
 
 // Función para editar venta
-window.editarVenta = async (id) => {
+window.editarVenta = (id) => {
     try {
         window.location.href = `/ventas/editar/${id}`;
     } catch (error) {
@@ -102,7 +102,6 @@ window.eliminarVenta = async (id) => {
     }
 };
 
-// Función para formatear fecha
 function formatFecha(fecha) {
     if (!fecha) return '';
     const date = new Date(fecha);

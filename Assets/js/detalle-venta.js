@@ -6,6 +6,8 @@ let detalles = [];
 let ventaInfo = null;
 
 function renderTabla(lista) {
+    if (!tablaBody) return;
+    
     tablaBody.innerHTML = "";
     
     if (!lista || lista.length === 0) {
@@ -18,14 +20,14 @@ function renderTabla(lista) {
     let totalGeneral = 0;
     
     lista.forEach(detalle => {
-        const fila = document.createElement("tr");
         const subtotal = detalle.cantidad * detalle.precio_unitario;
         totalGeneral += subtotal;
         
+        const fila = document.createElement("tr");
         fila.innerHTML = `
             <td>${detalle.id || ''}</td>
             <td>${formatFecha(ventaInfo?.fecha)}</td>
-            <td>${ventaInfo?.id || detalle.idventa}</td>
+            <td>${ventaInfo?.id || ''}</td>
             <td>${ventaInfo?.idusuario || ''}</td>
             <td>${detalle.idproducto || ''}</td>
             <td><strong>${escapeHtml(detalle.nombre_producto || 'Producto')}</strong></td>
@@ -51,9 +53,13 @@ async function cargarDetalleVenta() {
     const urlParams = new URLSearchParams(window.location.search);
     const idVenta = urlParams.get('idVenta');
     
+    console.log('ID Venta obtenido:', idVenta);
+    
     if (!idVenta) {
         console.error('No se especificó ID de venta');
-        tablaBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No se especificó ID de venta</td></tr>';
+        if (tablaBody) {
+            tablaBody.innerHTML = '<tr><td colspan="9" style="text-align: center;">No se especificó ID de venta</td></tr>';
+        }
         return;
     }
     
@@ -61,18 +67,17 @@ async function cargarDetalleVenta() {
         const respuesta = await fetch(`/api/ventas/${idVenta}`);
         
         if (!respuesta.ok) {
-            throw new Error('Error al cargar detalle de venta');
+            const errorData = await respuesta.json();
+            throw new Error(errorData.error || 'Error al cargar detalle de venta');
         }
         
         const venta = await respuesta.json();
+        console.log('Venta cargada:', venta);
+        
         ventaInfo = venta;
         
-        // Convertir detalles al formato esperado por renderTabla
         if (venta.detalles && venta.detalles.length > 0) {
-            detalles = venta.detalles.map(d => ({
-                ...d,
-                idventa: venta.id
-            }));
+            detalles = venta.detalles;
         } else {
             detalles = [];
         }
@@ -87,7 +92,9 @@ async function cargarDetalleVenta() {
         
     } catch (error) {
         console.error('Error:', error);
-        tablaBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: red;">Error al cargar detalle: ${error.message}</td></tr>`;
+        if (tablaBody) {
+            tablaBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: red;">Error al cargar detalle: ${error.message}</td></tr>`;
+        }
     }
 }
 
@@ -113,15 +120,17 @@ function escapeHtml(text) {
 }
 
 // Buscador para filtrar productos en el detalle
-buscador.addEventListener("keyup", () => {
-    const texto = buscador.value.toLowerCase();
-    if (!detalles.length) return;
-    
-    const filtrados = detalles.filter(d =>
-        d.nombre_producto?.toLowerCase().includes(texto) ||
-        d.idproducto?.toString().includes(texto)
-    );
-    renderTabla(filtrados);
-});
+if (buscador) {
+    buscador.addEventListener("keyup", () => {
+        const texto = buscador.value.toLowerCase();
+        if (!detalles.length) return;
+        
+        const filtrados = detalles.filter(d =>
+            d.nombre_producto?.toLowerCase().includes(texto) ||
+            d.idproducto?.toString().includes(texto)
+        );
+        renderTabla(filtrados);
+    });
+}
 
 cargarDetalleVenta();
