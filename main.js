@@ -1011,7 +1011,8 @@ server.get('/api/detalle-ventas', (req, res) => {
     p.NOMBRE AS NOMBREPRODUCTO,  -- Nombre del producto
     d.CANTIDAD,         -- Cantidad vendida
     d.PRECIOUNITARIO,   -- Precio unitario
-    d.SUBTOTAL          -- Subtotal
+    d.SUBTOTAL,         -- Subtotal
+    v.TOTAL             -- Total de la venta
 FROM DETALLEVENTA d
 JOIN VENTAS v
     ON d.IDVENTA = v.IDVENTA

@@ -1,5 +1,6 @@
 
 const tablaBody = document.querySelector("#tablaDetalleVentas tbody");
+const divtotal = document.getElementById("total");
 const buscador = document.getElementById("buscador");
 const params = new URLSearchParams(window.location.search);
 const idVenta = params.get("idVenta");  // <-- este es el ID de la venta
@@ -9,11 +10,13 @@ let detalle = []; // Lista de detalles de venta
 
 function renderTabla(lista) {
     tablaBody.innerHTML = "";
-
+    
+    let total = 0; // Variable para acumular el total general
+    
     lista.forEach(detalle => {
         const fila = document.createElement("tr");
         
-        
+        total += detalle.SUBTOTAL; // Sumar el subtotal de cada detalle al total general
 
         fila.innerHTML = `
             <td>${detalle.IDDETALLE}</td>
@@ -29,6 +32,7 @@ function renderTabla(lista) {
         `;
 
         tablaBody.appendChild(fila);
+        divtotal.innerHTML = `<p><strong>Total: $${total.toFixed(2)}</strong></p>`;
     });
 }
 async function cargarDetalleVentas(idVenta) {
