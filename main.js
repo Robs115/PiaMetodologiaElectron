@@ -7,6 +7,8 @@ const sqlite3 = require('sqlite3').verbose();
 const server = express(); 
 const PORT = 3000;
 
+let currentUser = null;
+
 const db = new sqlite3.Database(path.join(__dirname, 'PiaMetodologia.db'), (err) => {
     if (err) {
         console.error("Error conectando a la BD:", err.message);
@@ -24,7 +26,7 @@ function createWindow() {
         contextIsolation: true
     }
 });
-    win.loadURL(`http://localhost:${PORT}`);
+    win.loadURL(`http://localhost:${PORT}/login`);
 }
 
 electronApp.whenReady().then(createWindow);
@@ -110,6 +112,32 @@ ipcMain.handle('obtenerDashboard', async () => {
     });
 });
 
+//Login
+
+ipcMain.handle('login', (event, { usuario, contra }) => {
+    return new Promise((resolve, reject) => {
+
+        db.get(
+            "SELECT USUARIO, ROL FROM USUARIOS WHERE USUARIO = ? AND PASSWORD = ?",
+            [usuario, contra],
+            (err, row) => {
+                if (err) return reject(err);
+
+                if (row) {
+                    currentUser = row;
+                    resolve(row);   // user found
+                } else {
+                    resolve(null);  // wrong login
+                }
+            }
+        );
+
+    });
+});
+
+ipcMain.handle('getUser', () => {
+    return currentUser;
+});
 
 
 // Archivos estáticos
@@ -117,6 +145,11 @@ server.use(express.static('Assets'));
 server.use(express.json());
 
 // Rutas
+
+server.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/login.html'));
+});
+
 server.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/index.html'));
 });

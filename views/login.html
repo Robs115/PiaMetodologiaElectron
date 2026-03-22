@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/stylelogin.css">
+    <script src="/js/login.js"></script>
+</head>
+<body>
+    <div id="logbox">
+        <h1>Inicio de sesion:</h1>
+
+        <div class="cosoCuadro">
+        <p>Usuario</p>
+        <input id="usuario" type="text" required>
+        </div>
+
+        <div class="cosoCuadro">
+        <p>Contrasena</p>
+        <input id="contrasena" type="password" required>
+        </div>
+
+        <button id="btnLogin" type="button" onclick="login()">Enviar</button>
+
+        <p id="mensaje" class="error"></p>
+
+
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,58 @@
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f6f9;
+    display: flex;
+    justify-content: center;  /* horizontal */
+    align-items: center;      /* vertical */
+    height: 100vh;            /* full screen */
+    margin: 0;
+}
+
+div {
+    background-color: white;
+    padding: 50px;
+    border-radius: 10px;
+}
+
+p {
+    font-size: larger;
+    text-align: left;
+    margin-left: 5px;
+}
+
+button {
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: lightgray;
+    display: block;
+    margin-left: auto;
+    font-size: large;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+input {
+    border-radius: 2px;
+    padding: 5px;
+}
+
+.error {
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+}
