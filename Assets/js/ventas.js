@@ -48,7 +48,7 @@ function renderTabla() {
     tabla.innerHTML = "";
     let total = 0;
 
-    venta.forEach(p => {
+    venta.forEach((p, index) => {
         const subtotal = p.PRECIOVENTA * p.cantidad;
         total += subtotal;
 
@@ -56,13 +56,34 @@ function renderTabla() {
             <tr>
                 <td>${p.NOMBRE}</td>
                 <td>$${p.PRECIOVENTA}</td>
-                <td>${p.cantidad}</td>
+                <td><input 
+                        type="number" 
+                        min="1" 
+                        value="${p.cantidad}" 
+                        data-index="${index}" 
+                        class="input-cantidad"
+                        style="width: 60px;"
+                    >
+                </td>
                 <td>$${subtotal}</td>
             </tr>
         `;
         tabla.innerHTML += fila;
     });
+ // 🔥 Escuchar cambios en los inputs
+    document.querySelectorAll(".input-cantidad").forEach(inputCantidad => {
+        inputCantidad.addEventListener("change", (e) => {
+            const index = e.target.dataset.index;
+            let nuevaCantidad = parseInt(e.target.value);
 
+            if (nuevaCantidad < 1 || isNaN(nuevaCantidad)) {
+                nuevaCantidad = 1;
+            }
+
+            venta[index].cantidad = nuevaCantidad;
+            renderTabla(); // refresca tabla
+        });
+    });
     console.log("Total:", total);
 }
 

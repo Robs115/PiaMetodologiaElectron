@@ -975,6 +975,17 @@ server.post('/api/ventas', (req, res) => {
             (IDVENTA, IDPRODUCTO, CANTIDAD, PRECIOUNITARIO, SUBTOTAL)
             VALUES (?, ?, ?, ?, ?)
         `;
+        const sqlUpdateStock = `
+            UPDATE INVENTARIO
+            SET STOCK = STOCK - ?
+            WHERE IDPRODUCTO = ?
+        `;
+        productos.forEach(p => {
+            db.run(sqlUpdateStock, [p.cantidad, p.IDPRODUCTO], (err) => {
+                if (err) console.error("Error actualizando stock:", err);
+            });
+
+        });
 
         productos.forEach(p => {
             db.run(sqlDetalle, [
