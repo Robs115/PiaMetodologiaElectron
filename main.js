@@ -766,29 +766,48 @@ server.post('/api/proveedores', (req, res) => {
 
     const { nombre, telefono, email, direccion, activo } = req.body;
 
-    const sqlProveedor = `
-        INSERT INTO PROVEEDORES
-        (NOMBRE, TELEFONO, EMAIL, DIRECCION, ACTIVO)
-        VALUES (?, ?, ?, ?, ?)
+    const sqlCheck = `
+        SELECT * FROM PROVEEDORES 
+        WHERE EMAIL = ? OR TELEFONO = ? OR NOMBRE = ?
     `;
-
-    db.run(sqlProveedor, [nombre, telefono, email, direccion, activo], function(err) {
+    
+    db.get(sqlCheck, [email, telefono, nombre], (err, row) => {
 
         if (err) {
-            console.error("ERROR SQLITE:", err);
-            return res.status(500).json({ success: false });
+            console.error("Error en SELECT:", err);
+            return res.status(400).json({success: false });
         }
 
-        console.log("INSERT OK, ID:", this.lastID); // ← IMPORTANTE
+        if (row) {
+            return res.status(400).json({error: "Proveedor ya existe", success: false });
+        }
 
-        res.json({
-            success: true,
-            idProveedor: this.lastID
+        // 🔥 SOLO SI NO EXISTE, INSERTAMOS
+        const sqlProveedor = `
+            INSERT INTO PROVEEDORES
+            (NOMBRE, TELEFONO, EMAIL, DIRECCION, ACTIVO)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+
+        db.run(sqlProveedor, [nombre, telefono, email, direccion, activo], function(err) {
+
+            if (err) {
+                console.error("ERROR SQLITE:", err);
+                return res.status(400).json({ success: false });
+            }
+
+            console.log("INSERT OK, ID:", this.lastID);
+
+            return res.json({
+                success: true,
+                idProveedor: this.lastID
+            });
         });
 
     });
 
 });
+
 
 // Obtener proveedor por ID (para editar)
 server.get('/api/proveedores/:id', (req, res) => {
