@@ -1,7 +1,7 @@
-
 const input = document.getElementById("buscadorproducto");
 const tabla = document.querySelector("#tablaVentas tbody");
-const realizar = document.querySelector(".btn-success");
+const realizar = document.querySelector(".btn-realizar-venta");
+const totalSpan = document.getElementById("total-venta");
 
 let venta = []; // cada elemento: {IDPRODUCTO, NOMBRE, PRECIOVENTA, cantidad}
 
@@ -15,7 +15,7 @@ input.addEventListener("keydown", async (e) => {
             const data = await res.json();
 
             if (data.error) {
-                alert("Producto no encontrado");
+                mostrarAlerta("Producto no encontrado", "error");
                 input.value = "";
                 return;
             }
@@ -25,6 +25,7 @@ input.addEventListener("keydown", async (e) => {
 
         } catch (error) {
             console.error(error);
+            mostrarAlerta("Error de conexión", "error");
         }
     }
 });
@@ -54,23 +55,29 @@ function renderTabla() {
 
         const fila = `
             <tr>
-                <td>${p.NOMBRE}</td>
-                <td>$${p.PRECIOVENTA}</td>
-                <td><input 
+                <td><strong>${escapeHtml(p.NOMBRE)}</strong></td>
+                <td>$${p.PRECIOVENTA.toFixed(2)}</td>
+                <td>
+                    <input 
                         type="number" 
                         min="1" 
                         value="${p.cantidad}" 
                         data-index="${index}" 
                         class="input-cantidad"
-                        style="width: 60px;"
                     >
                 </td>
-                <td>$${subtotal}</td>
+                <td>$${subtotal.toFixed(2)}</td>
             </tr>
         `;
         tabla.innerHTML += fila;
     });
- // 🔥 Escuchar cambios en los inputs
+    
+    // Actualizar total
+    if (totalSpan) {
+        totalSpan.textContent = `$${total.toFixed(2)}`;
+    }
+    
+    // Escuchar cambios en los inputs
     document.querySelectorAll(".input-cantidad").forEach(inputCantidad => {
         inputCantidad.addEventListener("change", (e) => {
             const index = e.target.dataset.index;
@@ -78,28 +85,32 @@ function renderTabla() {
 
             if (nuevaCantidad < 1 || isNaN(nuevaCantidad)) {
                 nuevaCantidad = 1;
+                e.target.value = 1;
             }
 
             venta[index].cantidad = nuevaCantidad;
-            renderTabla(); // refresca tabla
+            renderTabla();
         });
     });
-    console.log("Total:", total);
+}
+
+function mostrarAlerta(mensaje, tipo = "error") {
+    const alerta = document.querySelector(".alert");
+    alerta.style.display = "block";
+    alerta.textContent = mensaje;
+    alerta.style.backgroundColor = tipo === "error" ? "#fee2e2" : "#dcfce7";
+    alerta.style.color = tipo === "error" ? "#dc2626" : "#16a34a";
+    
+    setTimeout(() => {
+        alerta.style.display = "none";
+    }, 3000);
 }
 
 realizar.addEventListener("click", async () => {
     if (venta.length === 0) {
-        const alerta = document.querySelector(".alert");
-        alerta.style.display = "block";
-        alerta.textContent = "No hay productos en la venta";
-        alerta.style.color = "red";
+        mostrarAlerta("No hay productos en la venta", "error");
         input.focus();
         return;
-    }
-
-    if (venta.length > 0) {
-        const alerta = document.querySelector(".alert");
-        alerta.style.display = "none";
     }
 
     const fecha = new Date().toISOString().split('T')[0];
@@ -110,7 +121,6 @@ realizar.addEventListener("click", async () => {
         total += p.PRECIOVENTA * p.cantidad;
     });
 
-    // ✅ Creamos el array de productos como objetos para el backend
     const productosDetalle = venta.map(p => ({
         IDPRODUCTO: p.IDPRODUCTO,
         cantidad: p.cantidad,
@@ -135,22 +145,30 @@ realizar.addEventListener("click", async () => {
         const data = await res.json();
 
         if (data.success) {
-            console.log("Venta guardada con ID:", data.idVenta);
-
+            mostrarAlerta("Venta realizada correctamente", "success");
+            
             // Limpiar venta
             venta = [];
             renderTabla();
             input.value = "";
-
+            
             setTimeout(() => {
                 input.focus();
             }, 0);
 
         } else {
-            alert("Error al guardar la venta");
+            mostrarAlerta("Error al guardar la venta", "error");
         }
 
     } catch (error) {
         console.error("Error:", error);
+        mostrarAlerta("Error de conexión con el servidor", "error");
     }
 });
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}

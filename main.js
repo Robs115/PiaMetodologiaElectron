@@ -727,7 +727,7 @@ server.put('/api/clientes/:id', (req, res) => {
     });
 });
 
-// Eliminar cliente
+
 // Eliminar cliente
 server.delete('/api/clientes/:id', (req, res) => {
     const id = req.params.id;
@@ -1093,6 +1093,161 @@ WHERE d.IDVENTA = ?;
             res.json(rows);
         }
     });
+});
+
+
+// Obtener todas las ventas con detalles
+server.get('/api/ventas', (req, res) => {
+    const sql = `
+        SELECT 
+            V.IDVENTA as id,
+            V.FECHA as fecha,
+            V.IDUSUARIO as idusuario,
+            U.NOMBRE as nombre_usuario,
+            V.TOTAL as total
+        FROM VENTAS V
+        LEFT JOIN USUARIOS U ON V.IDUSUARIO = U.IDUSUARIO
+        ORDER BY V.FECHA DESC
+    `;
+    
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error en la consulta" });
+        }
+        res.json(rows);
+    });
+});
+
+// Obtener venta por ID con sus detalles
+server.get('/api/ventas/:id', (req, res) => {
+    const id = req.params.id;
+    
+    const sqlVenta = `
+        SELECT 
+            V.IDVENTA as id,
+            V.FECHA as fecha,
+            V.IDUSUARIO as idusuario,
+            U.NOMBRE as nombre_usuario,
+            V.TOTAL as total
+        FROM VENTAS V
+        LEFT JOIN USUARIOS U ON V.IDUSUARIO = U.IDUSUARIO
+        WHERE V.IDVENTA = ?
+    `;
+    
+    db.get(sqlVenta, [id], (err, venta) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error en la consulta" });
+        }
+        
+        if (!venta) {
+            return res.status(404).json({ error: "Venta no encontrada" });
+        }
+        
+        // Obtener detalles de la venta
+        const sqlDetalles = `
+            SELECT 
+                D.IDDETALLE as id,
+                D.IDPRODUCTO as idproducto,
+                P.NOMBRE as nombre_producto,
+                D.CANTIDAD as cantidad,
+                D.PRECIO_UNITARIO as precio_unitario,
+                D.SUBTOTAL as subtotal
+            FROM DETALLEVENTA D
+            LEFT JOIN PRODUCTOS P ON D.IDPRODUCTO = P.IDPRODUCTO
+            WHERE D.IDVENTA = ?
+        `;
+        
+        db.all(sqlDetalles, [id], (err2, detalles) => {
+            if (err2) {
+                console.error(err2);
+                return res.status(500).json({ error: "Error al obtener detalles" });
+            }
+            
+            res.json({
+                ...venta,
+                detalles
+            });
+        });
+    });
+});
+
+// Actualizar venta (solo fecha y usuario, los detalles se manejan aparte)
+server.put('/api/ventas/:id', (req, res) => {
+    const id = req.params.id;
+    const { fecha, idusuario } = req.body;
+    
+    const sql = `
+        UPDATE VENTAS 
+        SET FECHA = ?, 
+            IDUSUARIO = ?
+        WHERE IDVENTA = ?
+    `;
+    
+    db.run(sql, [fecha, idusuario, id], function(err) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error al actualizar venta" });
+        }
+        
+        if (this.changes === 0) {
+            return res.status(404).json({ error: "Venta no encontrada" });
+        }
+        
+        res.json({ success: true, message: "Venta actualizada correctamente" });
+    });
+});
+
+// Eliminar venta y sus detalles
+server.delete('/api/ventas/:id', (req, res) => {
+    const id = req.params.id;
+    
+    // Verificar si la venta existe
+    const sqlCheck = `SELECT IDVENTA FROM VENTAS WHERE IDVENTA = ?`;
+    
+    db.get(sqlCheck, [id], (err, row) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error en la consulta" });
+        }
+        
+        if (!row) {
+            return res.status(404).json({ error: "Venta no encontrada" });
+        }
+        
+        // Primero eliminar los detalles de la venta
+        const sqlDeleteDetalles = `DELETE FROM DETALLEVENTA WHERE IDVENTA = ?`;
+        
+        db.run(sqlDeleteDetalles, [id], function(err2) {
+            if (err2) {
+                console.error(err2);
+                return res.status(500).json({ error: "Error al eliminar detalles de la venta" });
+            }
+            
+            // Luego eliminar la venta
+            const sqlDeleteVenta = `DELETE FROM VENTAS WHERE IDVENTA = ?`;
+            
+            db.run(sqlDeleteVenta, [id], function(err3) {
+                if (err3) {
+                    console.error(err3);
+                    return res.status(500).json({ error: "Error al eliminar venta" });
+                }
+                
+                res.json({ success: true, message: "Venta eliminada correctamente" });
+            });
+        });
+    });
+});
+
+// Agregar la ruta para la página de edición
+server.get('/ventas/editar/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/ventas-editar.html'));
+});
+
+// Agregar la ruta para detalle de venta
+server.get('/detalle-venta', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/detalle-venta.html'));
 });
 
 

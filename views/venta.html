@@ -3,59 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--Bootstrap-->
-   <link rel="stylesheet" href="/styleindex.css" >
-       <link rel="stylesheet" href="/ventas.css" >
-       
-       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <title>VidaVet - Veterinaria profesional</title>
+    <link rel="stylesheet" href="/styleindex.css">
+    <link rel="stylesheet" href="/ventas.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <title>VidaVet - Punto de Venta</title>
 </head>
 <body>
     <div class="cprincipal">
         <nav class="sidebar">
-
             <h2>Panel principal</h2>
             <img src="/logoempresa.png" alt="Logo de empresa">
             <ul>
                 <li><a href="/">Inicio</a></li>
-            <li><a href="/venta">Ventas</a></li>
-            <li><a href="/clientes">Clientes</a></li>
-            <li><a href="/productos">Productos</a></li>
-            <li><a href="/pedidos">Pedidos</a></li>
-            <li><a href="/proveedores">Proveedores</a></li>
+                <li><a href="/venta">Ventas</a></li>
+                <li><a href="/clientes">Clientes</a></li>
+                <li><a href="/productos">Productos</a></li>
+                <li><a href="/pedidos">Pedidos</a></li>
+                <li><a href="/proveedores">Proveedores</a></li>
             </ul>
-            
-
         </nav>
 
-
-        
         <main class="contenido">
-            <button><a href="/venta/listar">Listar ventas</a></button>
+            <div class="venta-header">
+                <div class="header-titulo">
+                    <h2>Punto de Venta</h2>
+                </div>
+                <div class="header-acciones">
+                    <a href="/venta/listar" class="btn btn-listar">
+                        📋 Listar Ventas
+                    </a>
+                </div>
+            </div>
            
             <div class="realizarVenta">
-                <input id="buscadorproducto" type="text" placeholder="Codigo de barras..."> 
-                 <table id="tablaVentas">
+                <div class="buscador-container">
+                    <label for="buscadorproducto">Código de barras:</label>
+                    <input id="buscadorproducto" type="text" placeholder="Escanea o ingresa el código del producto...">
+                </div>
+                
+                <div class="tabla-contenedor">
+                    <table id="tablaVentas">
                         <thead>
                             <tr>
                                 <th>Producto</th>
                                 <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
+                                <th>Cantidad</th>
+                                <th>Subtotal</th>
                             </tr>
                         </thead>
                         <tbody>
                             
                         </tbody>
                     </table>
-                <button class="btn btn-success"> Realizar venta</button>
+                </div>
+                
+                <div class="venta-total">
+                    <div class="total-info">
+                        <span>Total:</span>
+                        <span id="total-venta" class="total-monto">$0.00</span>
+                    </div>
+                    <button class="btn btn-realizar-venta">Realizar Venta</button>
+                </div>
             </div>
             
             <div class="alert" style="display:none;"></div>
             
             <script src="/js/ventas.js"></script>
-            
         </main>
     </div>
 </body>
