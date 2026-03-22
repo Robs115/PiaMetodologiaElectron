@@ -68,8 +68,17 @@ function renderTabla() {
 
 realizar.addEventListener("click", async () => {
     if (venta.length === 0) {
-        alert("No hay productos en la venta");
+        const alerta = document.querySelector(".alert");
+        alerta.style.display = "block";
+        alerta.textContent = "No hay productos en la venta";
+        alerta.style.color = "red";
+        input.focus();
         return;
+    }
+
+    if (venta.length > 0) {
+        const alerta = document.querySelector(".alert");
+        alerta.style.display = "none";
     }
 
     const fecha = new Date().toISOString().split('T')[0];
