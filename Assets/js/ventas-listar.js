@@ -17,7 +17,9 @@ function renderTabla(lista) {
             <td>${venta.total}</td>
             <td>
                 <button class="btn editar">Editar</button>
-                <button class="btn detalle">Detalle</button>
+                <button class="btn detalle"> <a href="/detalle-venta?idVenta=${venta.id}" class="btn btn-success">
+            Detalle
+        </a></button>
                 <button class="btn eliminar">Eliminar</button>
             </td>
         `;

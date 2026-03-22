@@ -14,26 +14,6 @@ async function cargarPedido() {
         
         const pedido = await respuesta.json();
         
-        // Mostrar información con nombres
-        const infoProducto = document.getElementById("info-producto");
-        const infoProveedor = document.getElementById("info-proveedor");
-        
-        if (infoProducto) {
-            infoProducto.innerHTML = `
-                <strong>${escapeHtml(pedido.nombre_producto || 'No disponible')}</strong>
-                <br>
-                <small>ID: ${pedido.idproducto}</small>
-            `;
-        }
-        
-        if (infoProveedor) {
-            infoProveedor.innerHTML = `
-                <strong>${escapeHtml(pedido.nombre_proveedor || 'No disponible')}</strong>
-                <br>
-                <small>ID: ${pedido.idproveedor}</small>
-            `;
-        }
-        
         document.getElementById("idproducto").value = pedido.idproducto || '';
         document.getElementById("idproveedor").value = pedido.idproveedor || '';
         
@@ -54,13 +34,6 @@ async function cargarPedido() {
         loadingDiv.innerHTML = `<p style="color: red;">Error al cargar el pedido: ${error.message}</p>
                                 <a href="/pedidos" class="btn-cancelar">Volver a pedidos</a>`;
     }
-}
-
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
 }
 
 function mostrarNotificacion(mensaje, tipo = "success") {
