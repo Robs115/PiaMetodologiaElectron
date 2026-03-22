@@ -121,9 +121,18 @@ server.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/index.html'));
 });
 
+server.get('/detalle-venta', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/detalle-venta.html'));
+});
+
 server.get('/venta', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/venta.html'));
 });
+
+server.get('/ventas-listar', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views/ventas-listar.html'));
+});
+
 
 server.get('/clientes', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/clientes.html'));
@@ -986,6 +995,44 @@ server.post('/api/ventas', (req, res) => {
         });
     });
 });
+
+//Obtener detalle-venta
+
+server.get('/api/detalle-ventas', (req, res) => {
+    
+    const idVenta = req.query.idVenta;
+    const sql = `
+       SELECT 
+    d.IDDETALLE,        -- ID detalle
+    v.FECHA,            -- Fecha de la venta
+    v.IDVENTA,          -- ID venta
+    v.IDUSUARIO,        -- ID usuario
+    d.IDPRODUCTO,       -- ID producto
+    p.NOMBRE AS NOMBREPRODUCTO,  -- Nombre del producto
+    d.CANTIDAD,         -- Cantidad vendida
+    d.PRECIOUNITARIO,   -- Precio unitario
+    d.SUBTOTAL          -- Subtotal
+FROM DETALLEVENTA d
+JOIN VENTAS v
+    ON d.IDVENTA = v.IDVENTA
+JOIN PRODUCTOS p
+    ON d.IDPRODUCTO = p.IDPRODUCTO
+WHERE d.IDVENTA = ?;
+`;
+
+    db.all(sql, [idVenta], (err, rows) => {
+        console.log("DETALLE DE VENTAS ENCONTRADO:", rows);
+        if (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error en la consulta" });
+        } else {
+            res.json(rows);
+        }
+    });
+});
+
+
+  
 
 
 // Iniciar servidor
