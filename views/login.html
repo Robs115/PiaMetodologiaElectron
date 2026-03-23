@@ -11,17 +11,19 @@
     <div id="logbox">
         <h1>Inicio de sesion:</h1>
 
+    <form>
         <div class="cosoCuadro">
-        <p>Usuario</p>
+        <p class="cabezon">Usuario:</p>
         <input id="usuario" type="text" required>
         </div>
 
         <div class="cosoCuadro">
-        <p>Contrasena</p>
+        <p class="cabezon">Contraseña:</p>
         <input id="contrasena" type="password" required>
         </div>
 
-        <button id="btnLogin" type="button" onclick="login()">Enviar</button>
+        <button id="btnLogin" type="submit" onclick="login()">Enviar</button>
+    </form>
 
         <p id="mensaje" class="error"></p>
 

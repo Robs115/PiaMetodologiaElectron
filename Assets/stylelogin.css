@@ -8,34 +8,41 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f4f6f9;
+    background-color: #1d2735;
     display: flex;
     justify-content: center;  /* horizontal */
     align-items: center;      /* vertical */
-    height: 100vh;            /* full screen */
+    height: 90vh;            /* full screen */
     margin: 0;
 }
 
 div {
     background-color: white;
-    padding: 50px;
+    padding: 20px;
     border-radius: 10px;
 }
 
+#logbox {
+    padding-top: 30px;
+    padding-bottom: 20px;
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
 p {
-    font-size: larger;
+    font-size: xx-large;
     text-align: left;
     margin-left: 5px;
 }
 
 button {
     border: none;
-    padding: 5px;
+    padding: 8px;
     border-radius: 5px;
     background-color: lightgray;
     display: block;
     margin-left: auto;
-    font-size: large;
+    font-size: xx-large;
 }
 
 button:hover {
@@ -47,12 +54,19 @@ button:active {
 }
 
 input {
-    border-radius: 2px;
+    border-radius: 5px;
     padding: 5px;
+    font-size: x-large;
+    background-color: rgb(241, 241, 241);
+    outline: none;
 }
 
 .error {
     color: red;
     text-align: center;
     margin-top: 10px;
+}
+
+.cabezon {
+    margin-left: 0;
 }
