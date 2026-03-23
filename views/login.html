@@ -12,20 +12,22 @@
         <h1>Inicio de sesion:</h1>
 
     <form>
-        <div class="cosoCuadro">
+        <div class="cosoCuadro" id="userGuy">
         <p class="cabezon">Usuario:</p>
-        <input id="usuario" type="text" required>
+        <input id="usuario" type="text" required placeholder="...">
         </div>
 
-        <div class="cosoCuadro">
+        <div class="cosoCuadro" id="passwordGuy">
         <p class="cabezon">Contraseña:</p>
-        <input id="contrasena" type="password" required>
+        <input id="contrasena" type="password" required placeholder="...">
         </div>
 
-        <button id="btnLogin" type="submit" onclick="login()">Enviar</button>
+        <button id="btnLogin" type="submit" onclick="login()">Ingresar</button>
     </form>
 
+        <div id="contenedorAlerta">
         <p id="mensaje" class="error"></p>
+        </div>
 
 
     </div>

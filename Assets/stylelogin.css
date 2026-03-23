@@ -6,8 +6,12 @@
     box-sizing: border-box;
 }
 
+h1 {
+    text-align: center;
+}
+
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', sans-serif !important;
     background-color: #1d2735;
     display: flex;
     justify-content: center;  /* horizontal */
@@ -19,18 +23,19 @@ body {
 div {
     background-color: white;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 25px;
 }
 
 #logbox {
-    padding-top: 30px;
+    padding-top: 40px;
     padding-bottom: 20px;
     padding-left: 50px;
     padding-right: 50px;
+    box-shadow: 5px 5px 5px 5px;
 }
 
 p {
-    font-size: xx-large;
+    font-size: x-large;
     text-align: left;
     margin-left: 5px;
 }
@@ -38,35 +43,66 @@ p {
 button {
     border: none;
     padding: 8px;
-    border-radius: 5px;
+    border-radius: 25px;
     background-color: lightgray;
     display: block;
-    margin-left: auto;
-    font-size: xx-large;
+    margin: auto;
+    font-size: x-large;
+    margin-bottom: 40px;
+    padding-right: 60px;
+    padding-left: 60px;
+    box-shadow: 1px 1px 1px 1px;
 }
 
 button:hover {
-    background-color: #2980b9;
+    background-color: #1b75b1;
 }
 
 button:active {
     transform: scale(0.95);
+    background-color: #7bbfff;
 }
 
 input {
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 5px;
+    padding-left: 15px;
     font-size: x-large;
-    background-color: rgb(241, 241, 241);
+    background-color: rgb(212, 212, 212);
+    border: black solid 2px;
     outline: none;
+}
+
+input:focus {
+    background-color: rgb(247, 247, 247);
+    border-color: gray;
+
 }
 
 .error {
     color: red;
     text-align: center;
-    margin-top: 10px;
+    min-height: 50px;
+    
 }
 
 .cabezon {
-    margin-left: 0;
+    margin-left: 7px;
+    margin-bottom: 1px;
+}
+
+#userGuy {
+    padding-top: 0;
+}
+
+#passwordGuy {
+    margin-bottom: 40px;
+}
+
+form {
+    margin-top: 50px;
+}
+
+#contenedorAlerta {
+    padding-top: 0;
 }
