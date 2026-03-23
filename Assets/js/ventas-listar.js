@@ -104,7 +104,10 @@ window.eliminarVenta = async (id) => {
 
 function formatFecha(fecha) {
     if (!fecha) return '';
-    const date = new Date(fecha);
+    
+    const [year, month, day] = fecha.split('-');
+    const date = new Date(year, month - 1, day);
+
     return date.toLocaleDateString('es-MX', {
         year: 'numeric',
         month: 'long',

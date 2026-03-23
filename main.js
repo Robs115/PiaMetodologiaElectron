@@ -1007,14 +1007,9 @@ server.get("/producto/:codigo", (req, res) => {
 server.post('/api/ventas', (req, res) => {
     const { idusuario, total, productos } = req.body;
     
-
-    const now = new Date();
-    const mexicoDate = new Date(now.toLocaleString('en-US', { timeZone: 'America/Mexico_City' }));
-    const year = mexicoDate.getFullYear();
-    const month = String(mexicoDate.getMonth() + 1).padStart(2, '0');
-    const day = String(mexicoDate.getDate()).padStart(2, '0');
-    const fecha = `${year}-${month}-${day}`;
-    
+    const fecha = new Date().toLocaleDateString('en-CA', {
+        timeZone: 'America/Mexico_City'
+    });
     
     // Insertar la venta
     const sqlVenta = `
