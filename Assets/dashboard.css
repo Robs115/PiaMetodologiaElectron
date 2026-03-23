@@ -1,5 +1,6 @@
 body {
     background-color: #f5f6fa;
+    font-family: 'Inter', sans-serif !important;
 }
 
 
@@ -16,3 +17,7 @@ body {
     color: white;
 }
 
+ul{
+    margin: 0 !important;
+    padding: 0 !important;
+}
