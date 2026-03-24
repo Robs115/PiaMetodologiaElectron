@@ -196,6 +196,7 @@ server.get('/pedidos/crear', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/pedidos-crear.html'));
 });
 
+
 server.get('/proveedores/crear', (req, res) => {
     res.sendFile(path.join(__dirname, 'views/proveedores-crear.html'));
 });
@@ -456,33 +457,43 @@ server.get('/api/pedidos', (req, res) => {
 
 //Crear pedido
 server.post('/api/pedidos', (req, res) => {
-
-
-
     const { idproducto, idproveedor, fechapedido, cantidad } = req.body;
 
-    const sqlCliente = `
-        INSERT INTO PEDIDOS
-        (IDPRODUCTO, IDPROVEEDOR, FECHAPEDIDO, CANTIDAD)
-        VALUES (?, ?, ?, ?)
-    `;
+    db.serialize(() => {
+        db.run("BEGIN TRANSACTION");
 
-    db.run(sqlCliente, [idproducto, idproveedor, fechapedido, cantidad], function(err) {
+        const sqlAumentarStock = `
+            UPDATE INVENTARIO
+            SET STOCK = STOCK + ?
+            WHERE IDPRODUCTO = ?
+        `;
 
-        if (err) {
-            console.error("ERROR SQLITE:", err);
-            return res.status(500).json({ success: false });
-        }
+        db.run(sqlAumentarStock, [cantidad, idproducto], function(err) {
+            if (err) {
+                console.error("Error al actualizar stock:", err);
+                db.run("ROLLBACK");
+                return res.status(500).json({ error: "Error al actualizar stock" });
+            }
 
-        console.log("INSERT OK, ID:", this.lastID); // ← IMPORTANTE
+            const sqlCliente = `
+                INSERT INTO PEDIDOS
+                (IDPRODUCTO, IDPROVEEDOR, FECHAPEDIDO, CANTIDAD)
+                VALUES (?, ?, ?, ?)
+            `;
 
-        res.json({
-            success: true,
-            idCliente: this.lastID
+            db.run(sqlCliente, [idproducto, idproveedor, fechapedido, cantidad], function(err) {
+                if (err) {
+                    console.error("Error al insertar pedido:", err);
+                    db.run("ROLLBACK");
+                    return res.status(500).json({ success: false });
+                }
+
+                db.run("COMMIT");
+                console.log("Pedido registrado OK, ID:", this.lastID);
+                res.json({ success: true, idPedido: this.lastID });
+            });
         });
-
     });
-
 });
 
 // Obtener pedido por ID con nombres
