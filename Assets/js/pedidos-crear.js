@@ -41,20 +41,20 @@ form.addEventListener("submit", async (e) => {
 
     const idproducto = document.getElementById("idproducto").value.trim();
     const idproveedor = document.getElementById("idproveedor").value.trim();
-    const fecha = document.getElementById("fechapedido").value.trim();
+    const fechaRaw = document.getElementById("fechapedido").value.trim();
     const cantidad = document.getElementById("cantidad").value.trim();
 
-    if (!idproducto || !idproveedor || !fecha || !cantidad) {
+    if (!idproducto || !idproveedor || !fechaRaw || !cantidad) {
         mostrarToast("Todos los campos son obligatorios.", "error");
         return;
     }
 
+    const fecha = new Date(fechaRaw).toISOString().split("T")[0];
     
-
     const pedido = {
         idproducto,
         idproveedor,
-        fecha,
+        fechapedido: fecha,
         cantidad
     };
 
