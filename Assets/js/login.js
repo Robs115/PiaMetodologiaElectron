@@ -7,7 +7,7 @@ window.addEventListener("DOMContentLoaded", () => {
         const result = await window.api.login({ usuario, contra });
         
         if (result) {
-            window.location = "/dashboard";
+            window.location = "/";
         } else {
             document.getElementById("mensaje").textContent = "Datos inválidos.";
         }
